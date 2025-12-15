@@ -4,6 +4,7 @@ import { Menu, X, Globe } from 'lucide-react';
 import { Link as ScrollLink } from 'react-scroll';
 import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
+import ComingSoonModal from "@/components/modal/coming-soon";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +12,7 @@ export default function Navbar() {
   const { t, i18n } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [language, setLanguage] = useState<string>(i18n.language || "en");
+  const [open, setOpen] = useState(false);
 
   // Stable IDs (used for scroll)
   const sections = [
@@ -71,7 +73,7 @@ export default function Navbar() {
         {/* Right Side: App Store Buttons + Language Selector */}
         <div className="hidden lg:flex items-center gap-3 xl:gap-4">
           {/* button */}
-          <Button className='font-light rounded-full bg-[#9A24F6] hover:bg-[#d8a8fc]'>
+          <Button onClick={() => setOpen(true)} className='font-light rounded-full bg-[#9A24F6] hover:bg-[#d8a8fc]'>
             {t("sections.btn")}
           </Button>
 
@@ -158,10 +160,10 @@ export default function Navbar() {
             </ScrollLink>
           ))}
 
-          {/* App Store Buttons */}
+          {/*  Buttons */}
           <div className="flex justify-center gap-4 pt-10 pb-10">
             {/* button */}
-            <Button className='font-light rounded-full bg-[#9A24F6] hover:bg-[#d8a8fc]'>
+            <Button onClick={() => setOpen(true)} className='font-light rounded-full bg-[#9A24F6] hover:bg-[#d8a8fc]'>
               {t("sections.btn")}
             </Button>
           </div>
@@ -203,7 +205,7 @@ export default function Navbar() {
         </div>
       )}
 
-
+      <ComingSoonModal open={open} onClose={() => setOpen(false)} />
     </div>
   );
 }
