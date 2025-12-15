@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { FaLinkedinIn, FaInstagram, FaTiktok } from "react-icons/fa";
+import { FaTelegram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
 
@@ -56,12 +56,24 @@ export default function Footer() {
                 {/* Socials */}
                 <div className="relative z-10 flex flex-wrap gap-3 lg:justify-end">
                     <a
-                        href="#"
+                        href="https://x.com/JumpaBot_"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
                     >
                         <FaXTwitter />
                     </a>
+
                     <a
+                        href="https://t.me/Jumpatrading"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
+                    >
+                        <FaTelegram />
+                    </a>
+
+                    {/*<a
                         href="#"
                         className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
                     >
@@ -78,7 +90,7 @@ export default function Footer() {
                         className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
                     >
                         <FaTiktok />
-                    </a>
+                    </a> */}
                 </div>
 
 
