@@ -1,18 +1,98 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Layout from "@/components/ui/layout";
-import { Landing, } from "./pages";
+import { CreateAccountForm, ForgotPasswordEmailForm, ForgotPasswordPhoneForm, Landing, LoginForm, NoMatch, Onboarding, DriverDashboard, VerifyAccountForm, VerificationSuccess, VerificationFailed, VerificationFailedForm, LoanDashboard, LoanRequestSuccess, LoanNotification, SavingsOnboarding, SavingsDashboard, Loan, Savings, Verification, SavingsTargetDashboard, SavingsTargetForm, SavingsSummary, SavingsNotification, SavingsTargetSuccess, AiDashboard, DriverNotification, Withdraw, SetPinWithdraw, WithdrawBankDetails, WithdrawSendMoney, Settings, SettingsHome, SettingsProfile, PaymentSettings, ChangePaymentPin, WithdrawCryptoAsset, Investment, InvestmentHome } from "./pages";
+import SelectCryptoAsset from "./pages/home/withdraw/crypto/select-crypto";
+import LoginSuccess from "./pages/auth/login/login-sucess";
+import VerifyEmail from "./pages/auth/forgot-password/verification";
+import JumpaDashboard from "./pages/home/dashboard";
+
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Shared layout (Navbar + Footer are inside Layout) */}
-        <Route element={<Layout />}>
-          <Route path="/" element={<Landing/>}/>
-        </Route>
-      </Routes>
-    </Router>
+    <BrowserRouter>
+      <div style={{ fontFamily: "Geist" }}>
+        <Routes>
+
+          {/* auth */}
+          <Route path="/create-account" element={<CreateAccountForm />} />
+          <Route path="/login" element={<LoginForm />} />
+            <Route path="/login-success" element={<LoginSuccess />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password-email" element={<ForgotPasswordEmailForm />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+
+          {/* Shared layout (Navbar + Footer are inside Layout) */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<Landing />} />
+          </Route>
+
+          {/* Driver */}
+          <Route path="/home">
+            <Route index element={<JumpaDashboard />} />
+            <Route path="3rikeAi" element={<AiDashboard />} />
+            <Route path="notification" element={<DriverNotification />} />
+            {/* Verification routes */}
+            <Route path="verification" element={<Verification />}>
+              <Route index element={<VerifyAccountForm />} />
+              <Route path="success" element={<VerificationSuccess />} />
+              <Route path="failed" element={<VerificationFailed />} />
+              <Route path="retry" element={<VerificationFailedForm />} />
+            </Route>
+
+            {/* Loan routes */}
+            <Route path="loan" element={<Loan />}>
+              <Route index element={<LoanDashboard />} />
+              <Route path="submitted" element={<LoanRequestSuccess />} />
+              <Route path="notification" element={<LoanNotification />} />
+            </Route>
+
+            {/* Withdraw routes */}
+            <Route path="withdraw" element={<Withdraw />}>
+              <Route index element={<SetPinWithdraw />} />
+              <Route path="bank-details" element={<WithdrawBankDetails />} />
+              <Route path="send-money" element={<WithdrawSendMoney />} />
+              <Route path="crypto" element={<SelectCryptoAsset />} />
+            <Route path="crypto-withdraw" element={<WithdrawCryptoAsset />} />
+            </Route>
+
+            {/* Savings route */}
+            <Route path="savings" element={<Savings />}>
+              <Route index element={<SavingsOnboarding />} />
+              <Route path="dashboard" element={<SavingsDashboard />} />
+              <Route path="target" element={<SavingsTargetDashboard />} />
+              <Route path="create-target" element={<SavingsTargetForm />} />
+              <Route path="summary" element={<SavingsSummary />} />
+              <Route path="notification" element={<SavingsNotification />} />
+              <Route path="success" element={<SavingsTargetSuccess />} />
+            </Route>
+
+            {/* Investment route */}
+            <Route path="investment" element={<Investment />}>
+              <Route index element={<InvestmentHome />} />
+            </Route>
+
+            {/* Settings route */}
+            <Route path="settings" element={<Settings />}>
+              <Route index element={<SettingsHome />} />
+              <Route path="profile" element={<SettingsProfile />} />
+              <Route path="payment" element={<PaymentSettings />} />
+              <Route path="change-pin" element={<ChangePaymentPin />} />
+            </Route>
+
+            <Route path="*" element={<NoMatch />} />
+          </Route>
+
+
+
+          {/* Using path="*"" means "match anything", so this route
+          acts like a catch-all for URLs that we don't have explicit
+          routes for. */}
+          <Route path="*" element={<NoMatch />} />
+
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

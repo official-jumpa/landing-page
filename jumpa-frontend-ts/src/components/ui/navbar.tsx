@@ -5,6 +5,7 @@ import { Link as ScrollLink } from 'react-scroll';
 import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
 import ComingSoonModal from "@/components/modal/coming-soon";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +14,11 @@ export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [language, setLanguage] = useState<string>(i18n.language || "en");
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleOnboardingNavigate = () => {
+    navigate('/onboarding')
+  };
 
   // Stable IDs (used for scroll)
   const sections = [
@@ -70,10 +76,9 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Right Side: App Store Buttons + Language Selector */}
         <div className="hidden lg:flex items-center gap-3 xl:gap-4">
           {/* button */}
-          <Button onClick={() => setOpen(true)} className='font-light rounded-full bg-[#9A24F6] hover:bg-[#d8a8fc]'>
+          <Button onClick={handleOnboardingNavigate} className='font-light rounded-full bg-[#9A24F6] hover:bg-[#d8a8fc]'>
             {t("sections.btn")}
           </Button>
 
@@ -163,7 +168,7 @@ export default function Navbar() {
           {/*  Buttons */}
           <div className="flex justify-center gap-4 pt-10 pb-10">
             {/* button */}
-            <Button onClick={() => setOpen(true)} className='font-light rounded-full bg-[#9A24F6] hover:bg-[#d8a8fc]'>
+            <Button onClick={handleOnboardingNavigate} className='font-light rounded-full bg-[#9A24F6] hover:bg-[#d8a8fc]'>
               {t("sections.btn")}
             </Button>
           </div>

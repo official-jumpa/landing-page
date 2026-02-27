@@ -33,7 +33,7 @@ export default function Footer() {
                     <div className="flex items-center space-x-2">
                         <img
                             src="/logo.svg"
-                            alt="Rhythm logo"
+                            alt="jumpa logo"
                             className="w-10 h-10 object-contain"
                         />
                         <h2 className="text-xl font-semibold">jumpa</h2>

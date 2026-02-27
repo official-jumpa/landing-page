@@ -3,12 +3,18 @@ import { useTranslation } from "react-i18next";
 import Navbar from "@/components/ui/navbar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ComingSoonModal from "@/components/modal/coming-soon";
 
 export default function HeroSection() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   
+  const handleOnboardingNavigate = () => {
+    navigate('/onboarding')
+  };
+
   return (
     <div className="bg-white relative min-h-screen w-full overflow-hidden">
 
@@ -34,7 +40,7 @@ export default function HeroSection() {
           </p>
 
           <div className="flex flex-wrap gap-4 mt-4">
-            <Button onClick={() => setOpen(true)} className="px-6 sm:px-8 md:px-10 py-6 bg-[#9A24F6] hover:bg-[#d8a8fc] rounded-full cursor-pointer hover:scale-105 transition-transform duration-300">
+            <Button onClick={handleOnboardingNavigate} className="px-6 sm:px-8 md:px-10 py-6 bg-[#9A24F6] hover:bg-[#d8a8fc] rounded-full cursor-pointer hover:scale-105 transition-transform duration-300">
               {t("hero.cta.primary")}
             </Button>
 
