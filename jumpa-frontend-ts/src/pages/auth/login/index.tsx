@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -80,10 +80,11 @@ export default function LoginForm() {
     };
 
     return (
-        <div className="fixed inset-0 w-full h-dvh bg-black text-white flex flex-col items-center justify-between py-12">
+        // Changed to min-h-dvh and added overflow-y-auto to allow scrolling on small devices
+        <div className="min-h-dvh w-full bg-black text-white flex flex-col items-center justify-between py-8 overflow-y-auto">
             
             {/* --- HEADER --- */}
-            <div className="flex flex-col items-center mt-16 w-full px-6 text-center">
+            <div className="flex flex-col items-center mt-8 sm:mt-12 w-full px-6 text-center">
                 <h1 className="text-3xl font-bold mb-3">Welcome back!</h1>
                 {hasError ? (
                     <p className="text-[#A1A1AA] text-[15px]">Confirm your 4 - digit passcode.</p>
@@ -92,7 +93,7 @@ export default function LoginForm() {
                 )}
 
                 {/* --- PIN INDICATORS --- */}
-                <div className="flex flex-col items-center mt-12 mb-4 h-16">
+                <div className="flex flex-col items-center mt-8 sm:mt-12 mb-4 h-16">
                     <div className="flex gap-4">
                         {[0, 1, 2, 3].map((index) => {
                             const isFilled = index < currentPin.length;
@@ -125,8 +126,8 @@ export default function LoginForm() {
             </div>
 
             {/* --- CUSTOM KEYPAD --- */}
-            <div className="w-full max-w-xs mx-auto mb-auto mt-8">
-                <div className="grid grid-cols-3 gap-x-6 gap-y-6 justify-items-center">
+            <div className="w-full max-w-xs mx-auto my-6 sm:my-8 flex-1 flex flex-col justify-center">
+                <div className="grid grid-cols-3 gap-x-6 gap-y-4 sm:gap-y-6 justify-items-center">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                         <KeypadButton 
                             key={num} 
@@ -149,15 +150,16 @@ export default function LoginForm() {
                         type="button"
                         onClick={handleDelete}
                         disabled={loading || currentPin.length === 0}
-                        className="w-20 h-20 rounded-full flex items-center justify-center text-white active:bg-[#333333] transition-colors disabled:opacity-50"
+                        // Added responsive sizing to match the keypad buttons
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-white active:bg-[#333333] transition-colors disabled:opacity-50"
                     >
-                        <X className="w-7 h-7" />
+                        <X className="w-6 h-6 sm:w-7 sm:h-7" />
                     </button>
                 </div>
             </div>
 
             {/* --- FOOTER LINK --- */}
-            <div className="pb-6">
+            <div className="pb-4 sm:pb-6 mt-auto">
                 <Link 
                     to="/forgot-password-email" 
                     className="text-[#A1A1AA] text-sm flex items-center gap-1 hover:text-white transition-colors"
@@ -183,7 +185,8 @@ function KeypadButton({ children, onClick, disabled }: KeypadButtonProps) {
             type="button"
             onClick={onClick}
             disabled={disabled}
-            className="w-20 h-20 rounded-full bg-[#1C1C1E] text-white text-3xl flex items-center justify-center active:bg-[#333333] transition-colors disabled:opacity-50"
+            // Made buttons slightly smaller on mobile (w-16 h-16) and larger on bigger screens (sm:w-20 sm:h-20)
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#1C1C1E] text-white text-2xl sm:text-3xl flex items-center justify-center active:bg-[#333333] transition-colors disabled:opacity-50"
         >
             {children}
         </button>

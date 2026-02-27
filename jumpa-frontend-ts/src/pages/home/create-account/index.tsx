@@ -1,413 +1,198 @@
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useNavigate } from "react-router-dom";
-import pin from "@/assets/pin.svg";
-import back from "@/assets/back.svg";
-import warning from "@/assets/warning.svg";
 import { useState } from "react";
-import { EyeClosed, EyeIcon } from "lucide-react";
-import { PinInput } from "@/components/ui/pinInput";
-// import Swal from "sweetalert2";
-// import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { X } from "lucide-react";
 
+// --- ZOD SCHEMA ---
 const formSchema = z.object({
-    firstName: z.string().min(1, { message: "First name is required" }),
-    lastName: z.string().min(1, { message: "Last name is required" }),
-    // phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, { message: "Please enter a valid phone number" }),
-    phone: z.string().min(11, { message: "Please enter a valid phone number" }),
-    email: z.string().optional(),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    pin: z
-        .string()
-        .regex(/^\d{4}$/, { message: "PIN must be 4 digits" }),
-
-    confirmPin: z
-        .string()
-        .regex(/^\d{4}$/, { message: "PIN must be 4 digits" }),
-}).refine((data) => data.pin === data.confirmPin, {
-    path: ["confirmPin"],
-    message: "PINs do not match",
+    pin: z.string().max(4),
 });
 
 export default function CreateAccountForm() {
-    const [currentTab, setCurrentTab] = useState(0);
     const navigate = useNavigate();
-    const [loading, ] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showPin, setShowPin] = useState(false);
-
+    const [loading, setLoading] = useState(false);
+    const [hasError, setHasError] = useState(false);
+    
+    // --- STEP MANAGEMENT ---
+    const [step, setStep] = useState<1 | 2>(1);
+    const [createdPin, setCreatedPin] = useState("");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        mode: "onChange",
-        defaultValues: {
-            firstName: "",
-            lastName: "",
-            email: "",
-            phone: "",
-            password: "",
-            pin: "",
-            confirmPin: "",
-        },
+        defaultValues: { pin: "" },
     });
-    const { errors } = form.formState;
 
-    // Check if Tab 0 fields are valid
-    const isTab0Valid = () => {
-        const values = form.getValues();
-        return (
-            values.firstName.trim().length > 0 &&
-            values.lastName.trim().length > 0 &&
-            values.phone.length >= 11 &&
-            !errors.firstName &&
-            !errors.lastName &&
-            !errors.phone &&
-            !errors.email &&
-            !errors.password
-        );
+    const currentPin = form.watch("pin");
+
+    // --- DUMMY API CALL ---
+    const executeSubmit = async (finalPin: string) => {
+        setLoading(true);
+        setHasError(false);
+
+        // Simulate network delay for account creation/pin setting
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        
+        console.log("Pin successfully created & confirmed:", finalPin);
+        setLoading(false);
+        
+        // Navigate to the next page upon success
+        navigate("/import-options"); 
     };
 
-    // Check if Tab 1 fields are valid
-    const isTab1Valid = () => {
-        const values = form.getValues();
-        return (
-            values.pin.length === 4 &&
-            values.confirmPin.length === 4 &&
-            values.pin === values.confirmPin &&
-            !errors.pin &&
-            !errors.confirmPin
-        );
-    };
+    // --- KEYPAD LOGIC ---
+    const handleKeyPress = (key: string) => {
+        if (loading) return;
 
-    const handleDone = async () => {
-        const isValid = await form.trigger(["pin", "confirmPin"]);
-        if (isValid) {
-            form.handleSubmit(onSubmit)();
+        let newPin = currentPin;
+
+        // If user types after an error, clear the board and send them back to Step 1
+        if (hasError) {
+            newPin = "";
+            setHasError(false);
+            setStep(1);
+            setCreatedPin("");
+        }
+
+        if (newPin.length < 4) {
+            newPin += key;
+            form.setValue("pin", newPin);
+
+            // Trigger logic when 4 digits are reached
+            if (newPin.length === 4) {
+                if (step === 1) {
+                    // STEP 1 COMPLETE: Save pin and move to Step 2
+                    // We use a tiny 300ms timeout so the user actually sees the 4th dot fill up before it clears
+                    setTimeout(() => {
+                        setCreatedPin(newPin);
+                        setStep(2);
+                        form.setValue("pin", "");
+                    }, 300);
+                } else if (step === 2) {
+                    // STEP 2 COMPLETE: Compare pins
+                    if (newPin === createdPin) {
+                        executeSubmit(newPin);
+                    } else {
+                        // Mismatch
+                        setHasError(true);
+                    }
+                }
+            }
         }
     };
 
-    // Validate Tab 0 fields before proceeding
-    const handleNextTab = async () => {
-        const isValid = await form.trigger(['firstName', 'lastName', 'phone', 'email', 'password']);
-        if (isValid) {
-            setCurrentTab(1);
+    const handleDelete = () => {
+        if (loading) return;
+        
+        if (hasError) {
+            form.setValue("pin", "");
+            setHasError(false);
+            setStep(1);
+            setCreatedPin("");
+            return;
+        }
+
+        if (currentPin.length > 0) {
+            form.setValue("pin", currentPin.slice(0, -1));
         }
     };
-
-
-    async function onSubmit(data: z.infer<typeof formSchema>) {
-        console.log("Submitted Data:", data);
-        navigate("/driver");
-    };
-
-
-
 
     return (
-        <div className="fixed inset-0 overflow-y-auto bg-opacity-50 flex md:items-center justify-center">
-            <div className="bg-white sm:h-screen md:h-auto md:rounded-xl md:shadow-xl w-full max-w-xl p-6">
-                {/* Back Button */}
+        <div className="min-h-dvh w-full bg-black text-white flex flex-col justify-between py-8 overflow-y-auto">
+            
+            <div className="w-full max-w-sm mx-auto flex flex-col flex-1">
+                {/* --- HEADER --- */}
+                <div className="mt-8 sm:mt-16 w-full px-6 text-left">
+                    <h1 className="text-[28px] sm:text-3xl font-bold leading-tight">
+                        {step === 1 ? "Create your 4-digit passcode." : "Confirm your 4-digit passcode."}
+                    </h1>
+                </div>
 
+                {/* --- PIN INDICATORS --- */}
+                <div className="flex flex-col items-center justify-center mt-12 mb-4 h-24">
+                    <div className="flex gap-4">
+                        {[0, 1, 2, 3].map((index) => {
+                            const isFilled = index < currentPin.length;
+                            
+                            // Determine dot color based on state
+                            let dotClass = "bg-[#262626]"; // Empty state (Dark Grey)
+                            if (isFilled) {
+                                if (hasError) dotClass = "bg-red-500";
+                                else dotClass = "bg-[#8B5CF6]"; // Solid Purple
+                            }
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-
-                        {/* Rider Info Tab */}
-                        {currentTab === 0 && (
-                            <div className="space-y-6 ">
-                                <div className="relative flex items-center pt-10">
-                                    {/* Back button */}
-                                    <button
-                                        onClick={() => navigate(-1)}
-                                        className="pt-10 absolute left-0 top-1/2 -translate-y-1/2"
-                                    >
-                                        <img src={back} alt="Back" className="w-6 h-6" />
-                                    </button>
-
-                                    {/* Centered title */}
-                                    <p className="mx-auto font-extrabold text-xl text-center">
-                                        Create account
-                                    </p>
-                                </div>
-
-
-                                <FormField
-                                    control={form.control}
-                                    name="firstName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="First Name"
-                                                    {...field}
-                                                    className="border border-gray-300 w-full h-12"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
+                            return (
+                                <div
+                                    key={index}
+                                    className={`w-4 h-4 rounded-full transition-colors duration-200 ${
+                                        loading && isFilled && !hasError ? "animate-pulse" : ""
+                                    } ${dotClass}`}
                                 />
-                                <FormField
-                                    control={form.control}
-                                    name="lastName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Last Name"
-                                                    {...field}
-                                                    className="border border-gray-300 w-full h-12"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="email"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <div className="relative">
-                                                    <Input
-                                                        placeholder="Email"
-                                                        {...field}
-                                                        className="border border-gray-300 w-full h-12 pr-24"
-                                                    />
-
-                                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none">
-                                                        (Optional)
-                                                    </span>
-                                                </div>
-
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="phone"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Phone Number"
-                                                    {...field}
-                                                    className="border border-gray-300 w-full h-12"
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <div className="relative w-full">
-                                                    <Input {...field} type={showPassword ? "text" : "password"} placeholder="Enter password" className="border border-gray-300 w-full pr-24 h-12" />
-                                                    <Button
-                                                        type="button"
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => setShowPassword(!showPassword)}
-                                                        className="absolute right-2 top-1/2 -translate-y-1/2"
-                                                    >
-                                                        {showPassword ? (
-                                                            <EyeIcon className="w-6 h-6" />
-
-                                                        ) : (
-                                                            <EyeClosed className="w-6 h-6" />
-                                                        )}
-                                                    </Button>
-                                                </div>
-
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <Button
-                                    type="button"
-                                    disabled={!isTab0Valid()}
-                                    onClick={handleNextTab}
-                                    className={`
-                                        mt-20 w-full rounded-md py-6 transition
-                                        ${isTab0Valid()
-                                            ? "bg-[#01C259] hover:bg-[#019f4a]"
-                                            : "bg-[#7BCD8A] cursor-not-allowed"}
-                                    `}
-                                >
-                                    {isTab0Valid() ? "Next" : "Create Account"}
-                                </Button>
-
-                                <div className="text-center text-sm pb-5">
-                                    Already have an account?{" "}
-                                    <a href="/login" className="text-[#01C259] font-extrabold">
-                                        Log in
-                                    </a>
-                                </div>
-                            </div>
+                            );
+                        })}
+                    </div>
+                    
+                    {/* Error Message Space */}
+                    <div className="h-6 mt-4">
+                        {hasError && (
+                            <span className="text-red-500 text-xs font-medium">Does not match</span>
                         )}
+                    </div>
+                </div>
 
-                        {/* Password Tab */}
-                        {currentTab === 1 && (
-                            <div className="space-y-6">
-                                <div className="flex flex-col space-y-4 pt-10">
-                                    <div className="flex flex-row space-x-3">
-                                        <button onClick={() => setCurrentTab(currentTab - 1)} className="top-4 left-4">
-                                            <img src={back} alt="Back" className="w-6 h-6" />
-                                        </button>
-                                        <h1 className="font-light text-sm">Back</h1>
-                                    </div>
-                                    <div className="flex flex-row space-x-3">
-                                        <img src={pin} alt="pin" className="w-10 h-10" />
-                                        <h1 className="font-extrabold flex flex-col justify-center">Create Your Pin</h1>
-                                    </div>
+                {/* --- CUSTOM KEYPAD --- */}
+                <div className="w-full mt-auto mb-8 flex-1 flex flex-col justify-end">
+                    <div className="grid grid-cols-3 gap-x-6 gap-y-4 sm:gap-y-6 justify-items-center">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                            <KeypadButton 
+                                key={num} 
+                                onClick={() => handleKeyPress(num.toString())}
+                                disabled={loading}
+                            >
+                                {num}
+                            </KeypadButton>
+                        ))}
+                        
+                        {/* Empty spot bottom left */}
+                        <div /> 
 
-                                </div>
-                                <FormField
-                                    control={form.control}
-                                    name="pin"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <label className="text-sm text-gray-500 mb-2 block">
-                                                Enter your 4-digit pin
-                                            </label>
-
-                                            <div className="flex items-center gap-3">
-                                                <PinInput
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                    show={showPin}
-                                                />
-
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => setShowPin(!showPin)}
-
-                                                >
-                                                    {showPin ? (
-                                                        <EyeIcon className="w-6 h-6" />
-
-                                                    ) : (
-                                                        <EyeClosed className="w-6 h-6" />
-                                                    )}
-                                                </Button>
-                                            </div>
-
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="confirmPin"
-                                    render={({ field }) => (
-                                        <FormItem className="mt-6">
-                                            <label className="text-sm text-gray-500 mb-2 block">
-                                                Enter your 4-digit pin
-                                            </label>
-
-                                            <div className="flex items-center gap-3">
-                                                <PinInput
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                    show={showPin}
-                                                />
-
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => setShowPin(!showPin)}
-
-                                                >
-                                                    {showPin ? (
-                                                        <EyeIcon className="w-6 h-6" />
-
-                                                    ) : (
-                                                        <EyeClosed className="w-6 h-6" />
-                                                    )}
-                                                </Button>
-                                            </div>
-
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <div className="
-                                                mt-6
-                                                rounded-xl
-                                                border border-dotted border-[#F8D7AB]
-                                                bg-[#FDF5EA]
-                                                p-4
-                                                ">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex flex-row space-x-2">
-                                            <img src={warning} alt="Warning" className="w-6 h-6" />
-                                            <h1 className="text-md text-[#EE9C2E]">
-                                                Security tip
-                                            </h1>
-                                        </div>
-
-                                        <p className="text-sm text-[#EE9C2E]">
-                                            Never share your PIN with anyone, including support.
-                                            Always use a strong, unique PIN and keep your device secure
-                                            to protect your personal information.
-                                        </p>
-                                    </div>
-                                </div>
-
-
-                                <Button
-                                    className={`
-                                        w-full py-6 rounded-md transition mt-20
-                                        ${isTab1Valid()
-                                            ? "bg-[#01C259] hover:bg-[#019f4a]"
-                                            : "bg-[#7BCD8A] cursor-not-allowed"}
-                                    `}
-                                    type="button"
-                                    disabled={!isTab1Valid() || loading}
-                                    onClick={handleDone}
-                                    loading={loading}
-                                >
-                                    Confirm
-                                </Button>
-
-                                <div className="text-center text-sm pb-5">
-                                    Already have an account?{" "}
-                                    <a href="/login" className="text-[#01C259] font-extrabold">
-                                        Log in
-                                    </a>
-                                </div>
-                            </div>
-                        )}
-                    </form>
-                </Form>
+                        <KeypadButton onClick={() => handleKeyPress("0")} disabled={loading}>
+                            0
+                        </KeypadButton>
+                        
+                        {/* Backspace bottom right */}
+                        <button
+                            type="button"
+                            onClick={handleDelete}
+                            disabled={loading || currentPin.length === 0}
+                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-white active:bg-[#333333] transition-colors disabled:opacity-50"
+                        >
+                            <X className="w-6 h-6 sm:w-7 sm:h-7" />
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
-};
+}
+
+// --- SUB-COMPONENT: Keypad Button ---
+interface KeypadButtonProps {
+    children: React.ReactNode;
+    onClick: () => void;
+    disabled?: boolean;
+}
+
+function KeypadButton({ children, onClick, disabled }: KeypadButtonProps) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            disabled={disabled}
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#1C1C1E] text-white text-2xl sm:text-3xl flex items-center justify-center active:bg-[#333333] transition-colors disabled:opacity-50 font-medium"
+        >
+            {children}
+        </button>
+    );
+}

@@ -6,6 +6,10 @@ import SelectCryptoAsset from "./pages/home/withdraw/crypto/select-crypto";
 import LoginSuccess from "./pages/auth/login/login-sucess";
 import VerifyEmail from "./pages/auth/forgot-password/verification";
 import JumpaDashboard from "./pages/home/dashboard";
+import ImportOptions from "./pages/home/create-account/import-options";
+import SaveRecoveryPhrase from "./pages/home/create-account/save-recovery";
+import ImportPrivateKey from "./pages/home/create-account/private-key";
+import Notifications from "./pages/home/create-account/notifications";
 
 
 function App() {
@@ -17,11 +21,14 @@ function App() {
           {/* auth */}
           <Route path="/create-account" element={<CreateAccountForm />} />
           <Route path="/login" element={<LoginForm />} />
-            <Route path="/login-success" element={<LoginSuccess />} />
+          <Route path="/login-success" element={<LoginSuccess />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot-password-email" element={<ForgotPasswordEmailForm />} />
           <Route path="/onboarding" element={<Onboarding />} />
-
+          <Route path="/import-options" element={<ImportOptions />} />
+          <Route path="/save-recovery" element={<SaveRecoveryPhrase />} />
+          <Route path="/private-keys" element={<ImportPrivateKey />} />
+          <Route path="/notifications" element={<Notifications />} />
           {/* Shared layout (Navbar + Footer are inside Layout) */}
           <Route element={<Layout />}>
             <Route path="/" element={<Landing />} />
@@ -53,7 +60,7 @@ function App() {
               <Route path="bank-details" element={<WithdrawBankDetails />} />
               <Route path="send-money" element={<WithdrawSendMoney />} />
               <Route path="crypto" element={<SelectCryptoAsset />} />
-            <Route path="crypto-withdraw" element={<WithdrawCryptoAsset />} />
+              <Route path="crypto-withdraw" element={<WithdrawCryptoAsset />} />
             </Route>
 
             {/* Savings route */}
