@@ -372,7 +372,6 @@
 //   );
 // }
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Settings,
   Bell,
@@ -380,23 +379,10 @@ import {
   ChevronDown,
   EyeOff,
   TrendingUp,
-  Send,
-  ArrowDownToLine,
-  RefreshCw,
-  Users,
-  FileText,
-  Wifi,
-  MoreHorizontal,
-  Home,
-  Briefcase,
-  CreditCard,
-  BarChart2,
-  Key
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function JumpaDashboard() {
-  const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
 
   return (
@@ -606,7 +592,7 @@ function NavItem({
     <div 
       className={`flex flex-col items-center justify-center gap-1 cursor-pointer transition-all duration-300 ${
         isActive 
-          ? "bg-[#EAE5FF] text-[#5B3EE4] px-5 py-2.5 rounded-[1.5rem]" 
+          ? "bg-[#EAE5FF] text-[#5B3EE4] px-5 py-2.5 rounded-3xl" 
           : "text-gray-500 px-3 py-2.5 hover:text-gray-700"
       }`}
     >
