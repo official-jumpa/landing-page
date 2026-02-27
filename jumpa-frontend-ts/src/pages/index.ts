@@ -2,10 +2,8 @@ import Landing from "./landing";
 import NoMatch from "./no-match";
 import CreateAccountForm from "./home/create-account";
 import LoginForm from "./auth/login";
-import ForgotPasswordPhoneForm from "./auth/forgot-password/verification";
 import ForgotPasswordEmailForm from "./auth/forgot-password/email";
 import Onboarding from "./onboarding";
-import DriverDashboard from "./home/dashboard";
 import VerifyAccountForm from "./home/verification/form";
 import VerificationSuccess from "./home/verification/success";
 import VerificationFailed from "./home/verification/fail";
@@ -44,10 +42,8 @@ export {
     NoMatch,
     CreateAccountForm,
     LoginForm,
-    ForgotPasswordPhoneForm,
     ForgotPasswordEmailForm,
     Onboarding,
-    DriverDashboard,
     VerifyAccountForm,
     VerificationSuccess,
     VerificationFailed,
