@@ -592,8 +592,8 @@ function NavItem({
     <div 
       className={`flex flex-col items-center justify-center gap-1 cursor-pointer transition-all duration-300 ${
         isActive 
-          ? "bg-[#EAE5FF] text-[#5B3EE4] px-5 py-2.5 rounded-3xl" 
-          : "text-gray-500 px-3 py-2.5 hover:text-gray-700"
+          ? "bg-[#EAE5FF] text-[#5B3EE4] px-5 py-1 rounded-3xl" 
+          : "text-gray-500 px-3 py-1 hover:text-gray-700"
       }`}
     >
       <img 

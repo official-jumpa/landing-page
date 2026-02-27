@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button"; // Assuming Shadcn Button
 import LoginDrawer from "../auth/login/login-drawer";
+import CreateAccountDrawer from "../home/create-account/create-account-drawer";
 
 const onboardingData = [
     {
@@ -24,7 +24,6 @@ const onboardingData = [
 
 export default function Onboarding() {
     const [currentScreen, setCurrentScreen] = useState(0);
-    const navigate = useNavigate();
     const touchStartX = useRef<number | null>(null);
 
     const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
@@ -70,12 +69,7 @@ export default function Onboarding() {
 
                 {/* Bottom Buttons */}
                 <div className="w-full flex flex-col gap-3 max-w-md pb-6">
-                    <Button
-                        onClick={() => navigate("/create-account")}
-                        className="w-full h-12 rounded-xl bg-white hover:bg-gray-200 text-black text-base shadow-none transition-colors"
-                    >
-                        Create a new wallet
-                    </Button>
+                    <CreateAccountDrawer/>
 
                     <LoginDrawer />
                 </div>
