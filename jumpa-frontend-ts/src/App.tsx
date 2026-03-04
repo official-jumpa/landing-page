@@ -1,7 +1,7 @@
 import "./App.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Layout from "@/components/ui/layout";
-import { CreateAccountForm, ForgotPasswordEmailForm, Landing, LoginForm, NoMatch, Onboarding, VerifyAccountForm, VerificationSuccess, VerificationFailed, VerificationFailedForm, LoanDashboard, LoanRequestSuccess, LoanNotification, SavingsOnboarding, SavingsDashboard, Loan, Savings, Verification, SavingsTargetDashboard, SavingsTargetForm, SavingsSummary, SavingsNotification, SavingsTargetSuccess, AiDashboard, DriverNotification, Withdraw, SetPinWithdraw, WithdrawBankDetails, WithdrawSendMoney, Settings, SettingsHome, SettingsProfile, PaymentSettings, ChangePaymentPin, WithdrawCryptoAsset, Investment, InvestmentHome, AirtimeFlow } from "./pages";
+import { CreateAccountForm, ForgotPasswordEmailForm, Landing, LoginForm, NoMatch, Onboarding, VerifyAccountForm, VerificationSuccess, VerificationFailed, VerificationFailedForm, LoanDashboard, LoanRequestSuccess, LoanNotification, SavingsOnboarding, SavingsDashboard, Loan, Savings, Verification, SavingsTargetDashboard, SavingsTargetForm, SavingsSummary, SavingsNotification, SavingsTargetSuccess, AiDashboard, DriverNotification, Withdraw, SetPinWithdraw, WithdrawBankDetails, WithdrawSendMoney, Settings, SettingsHome, SettingsProfile, PaymentSettings, ChangePaymentPin, WithdrawCryptoAsset, Investment, InvestmentHome, AirtimeFlow, GroupFlow } from "./pages";
 import SelectCryptoAsset from "./pages/home/withdraw/crypto/select-crypto";
 import LoginSuccess from "./pages/auth/login/login-sucess";
 import VerifyEmail from "./pages/auth/forgot-password/verification";
@@ -39,6 +39,7 @@ function App() {
             <Route index element={<JumpaDashboard />} />
             <Route path="3rikeAi" element={<AiDashboard />} />
              <Route path="airtime" element={<AirtimeFlow/>} />
+             <Route path="group" element={<GroupFlow/>} />
             <Route path="notification" element={<DriverNotification />} />
             {/* Verification routes */}
             <Route path="verification" element={<Verification />}>
