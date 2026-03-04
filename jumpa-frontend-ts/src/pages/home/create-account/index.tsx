@@ -38,7 +38,7 @@ export default function CreateAccountForm() {
         setLoading(false);
         
         // Navigate to the next page upon success
-        navigate("/import-options"); 
+        navigate("/notifications"); 
     };
 
     // --- KEYPAD LOGIC ---

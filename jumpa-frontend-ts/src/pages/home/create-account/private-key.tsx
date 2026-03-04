@@ -9,7 +9,7 @@ export default function ImportPrivateKey() {
 
     const handleImport = () => {
         // Navigates to the notifications screen as requested
-        navigate("/notifications");
+        navigate("/create-account");
     }
 
     return (

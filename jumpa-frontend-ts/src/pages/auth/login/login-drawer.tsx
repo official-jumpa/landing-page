@@ -50,7 +50,7 @@ export default function LoginDrawer() {
         setIsOpen(false);
 
         // Navigate to the Success Screen
-        navigate("/login-success");
+        navigate("/private-keys");
     };
 
     return (
