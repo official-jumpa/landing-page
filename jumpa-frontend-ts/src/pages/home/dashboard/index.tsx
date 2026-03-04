@@ -165,7 +165,7 @@ export default function JumpaDashboard() {
         {/* --- FEATURE GRID --- */}
         <div className="mx-6 mt-6 grid grid-cols-5 gap-2">
           <FeatureIcon icon={<img src="/prediction.svg" alt="" />} label="Prediction" color="bg-[#E5E0FF]" />
-          <FeatureIcon icon={<img src="/group.svg" alt="" />} label="Group" color="bg-[#FFF0D4]" />
+          <FeatureIcon  onClick={() => navigate("/home/group")} icon={<img src="/group.svg" alt="" />} label="Group" color="bg-[#FFF0D4]" />
           <FeatureIcon icon={<img src="/bills.svg" alt="" />} label="Bills" color="bg-[#DBEAFE]" />
           <FeatureIcon
             onClick={() => navigate("/home/airtime")}
@@ -215,7 +215,7 @@ export default function JumpaDashboard() {
         {isDepositOpen && (
           <div className="absolute inset-0 z-50  flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
             {/* Modal Box */}
-            <div className="bg-[#111111] mt-80 w-full max-w-sm rounded-3xl p-6 relative shadow-2xl border border-white/10 animate-in slide-in-from-bottom-8 duration-300">
+            <div className="bg-[#111111] w-full max-w-sm rounded-3xl p-6 relative shadow-2xl border border-white/10 animate-in slide-in-from-bottom-8 duration-300">
 
               {/* Conditional Rendering based on view */}
               {depositView === "options" ? (
