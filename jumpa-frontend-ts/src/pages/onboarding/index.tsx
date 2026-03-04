@@ -7,18 +7,22 @@ const onboardingData = [
     {
         title: "Trade in chats.",
         description: "Jumpa lets you trade, send money, and move between stablecoins and local cash.",
+        image: "/image-1.svg", // The foreground illustration
     },
     {
         title: "Trade together.",
-        description: "Pool funds Assign a trader. Automatically split profits. Built for communities.",
+        description: "Pool funds. Assign a trader. Automatically split profits. Built for communities.",
+        image: "/onboarding-2.png",
     },
     {
         title: "Your Financial Agent.",
         description: "Set price alerts. Auto-execute trades. Split bills with voice. Save toward goals.",
+        image: "/onboarding-3.png",
     },
     {
         title: "Smart Saving Agent.",
         description: "A smart savings agent that invests your funds to help you reach your goals.",
+        image: "/onboarding-4.png",
     },
 ];
 
@@ -38,10 +42,8 @@ export default function Onboarding() {
 
         // Swipe threshold
         if (diff > 50 && currentScreen < onboardingData.length) {
-            // Swipe left → next
             setCurrentScreen((prev) => prev + 1);
         } else if (diff < -50 && currentScreen > 0) {
-            // Swipe right → previous
             setCurrentScreen((prev) => prev - 1);
         }
 
@@ -54,23 +56,27 @@ export default function Onboarding() {
         }
     };
 
+    const handleSkip = () => {
+        setCurrentScreen(onboardingData.length);
+    };
+
     // --- FINAL SCREEN (WALLET CREATION) ---
     if (currentScreen === onboardingData.length) {
         return (
-            <div className="fixed inset-0 w-full h-dvh bg-black flex flex-col justify-center items-center pb-10 px-6 ">
-                {/* Logo positioned just above the buttons */}
+            <div
+                // Using the background image here as well
+                className="fixed inset-0 w-full h-dvh bg-black bg-cover bg-center bg-no-repeat flex flex-col justify-center items-center pb-10 px-6"
+            >
                 <div className="flex items-center justify-center mb-12">
                     <img
                         src="/large-logo.svg"
                         alt="Jumpa Logo"
-                        className="w-full h-full object-contain "
+                        className="w-full h-full object-contain"
                     />
                 </div>
 
-                {/* Bottom Buttons */}
                 <div className="w-full flex flex-col gap-3 max-w-md pb-6">
-                    <CreateAccountDrawer/>
-
+                    <CreateAccountDrawer />
                     <LoginDrawer />
                 </div>
             </div>
@@ -82,25 +88,48 @@ export default function Onboarding() {
 
     return (
         <div
-            className="fixed inset-0 w-full h-dvh bg-black flex flex-col justify-end items-center pb-10 px-6"
+            // Replaced CSS gradient with the background image
+            className="fixed inset-0 w-full h-dvh bg-black bg-cover bg-center bg-no-repeat flex flex-col justify-between items-center pb-10 px-6 pt-14"
+            style={{ backgroundImage: "url('/gradient-bg.svg')" }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
-            <div className="w-full max-w-md flex flex-col items-center pb-6">
+            {/* Top Bar with Skip Button */}
+            <div className="w-full flex justify-end max-w-md z-10">
+                <button
+                    onClick={handleSkip}
+                    className="bg-white/10 hover:bg-white/20 text-white text-[13px] font-medium px-4 py-2 rounded-xl backdrop-blur-md transition-colors"
+                >
+                    Skip
+                </button>
+            </div>
 
+            {/* Foreground Image Area */}
+            <div className="flex-1 w-full max-w-md flex flex-col items-center justify-center my-6 z-10">
+                {/* When you have the real images, replace this placeholder div with:
+                  <img src={screenData.image} alt={screenData.title} className="w-full max-w-[280px] h-auto object-contain" /> 
+                */}
+                <img src={screenData.image} className="w-full h-full" alt="" />
+
+            </div>
+
+            {/* Bottom Content (Text & Buttons) */}
+            <div className="w-full max-w-md flex flex-col items-center pb-6 z-10">
                 {/* Pagination Dots */}
-                <div className="flex gap-2 justify-center mb-4">
+                <div className="flex gap-2 justify-center mb-6">
                     {onboardingData.map((_, index) => (
                         <div
                             key={index}
-                            className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${currentScreen === index ? "bg-white" : "bg-[#333333]"
+                            className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${currentScreen === index
+                                    ? "bg-white"
+                                    : "bg-white/30"
                                 }`}
                         />
                     ))}
                 </div>
 
                 {/* Inline Title & Description */}
-                <div className="text-center mb-8 px-2">
+                <div className="text-center mb-8 px-2 min-h-[60px]">
                     <p className="text-[15px] leading-relaxed tracking-wide text-[#9CA3AF]">
                         <span className="font-bold text-white pr-1">
                             {screenData.title}
@@ -112,13 +141,11 @@ export default function Onboarding() {
                 {/* Get Started Button */}
                 <Button
                     onClick={handleNext}
-                    className="w-full h-12 rounded-xl bg-white hover:bg-gray-200 text-black text-[15px] shadow-none transition-colors"
+                    className="w-full h-12 rounded-xl bg-white hover:bg-gray-200 text-black text-[15px] font-semibold shadow-none transition-colors"
                 >
                     Get started
                 </Button>
             </div>
-            <LoginDrawer />
         </div>
-        
     );
 }

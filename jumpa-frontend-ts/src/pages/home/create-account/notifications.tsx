@@ -14,6 +14,7 @@ export default function Notifications() {
             
             {/* --- MAIN CONTENT (Vertically Centered) --- */}
             <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md mx-auto text-center -mt-12">
+                <img src="/notifications.svg" alt="" />
                 <h1 className="text-3xl font-bold tracking-tight mb-4">
                     Enable notifications
                 </h1>

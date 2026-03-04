@@ -50,7 +50,7 @@ export default function CreateAccountDrawer() {
         setIsOpen(false);
 
         // Navigate to the Success Screen
-        navigate("/create-account");
+        navigate("/save-recovery");
     };
 
     return (
@@ -132,7 +132,7 @@ export default function CreateAccountDrawer() {
                             type="button"
                             className="w-full h-14 rounded-xl bg-[#262626] hover:bg-[#333333] text-white font-semibold text-base"
                         >
-                            Import using Secret Recovery Phrase
+                            Continue with Secret Recovery Phrase
                         </Button>
                     </div>
 

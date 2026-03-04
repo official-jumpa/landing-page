@@ -37,6 +37,7 @@ import SelectCryptoAsset from "./home/withdraw/crypto/select-crypto";
 import WithdrawCryptoAsset from "./home/withdraw/crypto/withdraw-crypto";
 import Investment from "./home/investment";
 import InvestmentHome from "./home/investment/home";
+import AirtimeFlow from "./home/airtime";
 export {
     Landing,
     NoMatch,
@@ -76,5 +77,6 @@ export {
     SelectCryptoAsset,
     WithdrawCryptoAsset,
     Investment,
-    InvestmentHome
+    InvestmentHome,
+    AirtimeFlow
 }
