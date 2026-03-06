@@ -10,6 +10,7 @@ import ImportOptions from "./pages/home/create-account/import-options";
 import SaveRecoveryPhrase from "./pages/home/create-account/save-recovery";
 import ImportPrivateKey from "./pages/home/create-account/private-key";
 import Notifications from "./pages/home/create-account/notifications";
+import SendMoneyFlow from "./pages/send";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/save-recovery" element={<SaveRecoveryPhrase />} />
           <Route path="/private-keys" element={<ImportPrivateKey />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/send" element={<SendMoneyFlow />} />
           {/* Shared layout (Navbar + Footer are inside Layout) */}
           <Route element={<Layout />}>
             <Route path="/" element={<Landing />} />
