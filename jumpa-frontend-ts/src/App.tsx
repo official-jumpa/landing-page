@@ -1,3 +1,4 @@
+import AiChat from "./pages/chat/AiChat";
 import "./App.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Layout from "@/components/ui/layout";
@@ -20,6 +21,7 @@ function App() {
         <Routes>
 
           {/* auth */}
+          <Route path="/chat" element={<AiChat />} />
           <Route path="/create-account" element={<CreateAccountForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/login-success" element={<LoginSuccess />} />
