@@ -32,38 +32,6 @@ const SUGGESTIONS = [
   "Exchange $30 to USDC ETh",
 ];
 
-const DEMO_MESSAGES: Message[] = [
-  {
-    id: "1",
-    role: "user",
-    text: "Send $30 to my mum also schedule to send $20 to her today by 12pm",
-    time: "2m ago",
-  },
-  {
-    id: "2",
-    role: "ai",
-    text: "Processing...\nsending $50 to mum confirm this order enter your withdrawal pin.",
-  },
-  {
-    id: "3",
-    role: "user",
-    text: "1111",
-    time: "2m ago",
-  },
-  {
-    id: "4",
-    role: "ai",
-    text: "",
-    isTransaction: true,
-    transactionDetails: {
-      label: "Processing Withdrawal",
-      sent: "Sent: 20$",
-      to: "To: Ndukwe Anita",
-      result: "Account credited successfully",
-    },
-  },
-];
-
 function TypingDots() {
   return (
     <div style={{ display: "flex", gap: 5, alignItems: "center", padding: "4px 2px" }}>
@@ -390,18 +358,7 @@ export default function AiChat() {
   const [showTyping, setShowTyping] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
-  const goTo = (s: Screen) => {
-    setScreen(s);
-    if (s === "chat-empty") { setMessages([]); setShowTyping(false); setInputValue(""); }
-    if (s === "chat-responding") {
-      setMessages([{ id: "u1", role: "user", text: "Send $30 to my mum also schedule to send $20 to her today by 12pm", time: "2m ago" }]);
-      setShowTyping(true);
-      setInputValue("");
-    }
-    if (s === "chat-transaction") { setMessages(DEMO_MESSAGES); setShowTyping(false); }
-  };
-
-  const renderScreen = () => {
+ const renderScreen = () => {
     switch (screen) {
       case "welcome": return <WelcomeScreen onClose={() => setScreen("home")} />;
       case "home": return <HomeScreen onPromptClick={(p) => { setInputValue(p); setMessages([]); setShowTyping(false); setScreen("chat-empty"); }} />;
