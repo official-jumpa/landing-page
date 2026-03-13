@@ -1,3 +1,4 @@
+import SendScreens from "./pages/send/SendScreens";
 import AiChat from "./pages/chat/AiChat";
 import "./App.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
@@ -21,6 +22,7 @@ function App() {
         <Routes>
 
           {/* auth */}
+          <Route path="/send-screens" element={<SendScreens />} />
           <Route path="/chat" element={<AiChat />} />
           <Route path="/create-account" element={<CreateAccountForm />} />
           <Route path="/login" element={<LoginForm />} />
