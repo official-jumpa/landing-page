@@ -1,0 +1,50 @@
+.dapp-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-xl);
+  min-height: calc(100vh - 120px);
+}
+
+.dapp-placeholder {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.dapp-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: var(--bg-surface-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-sm);
+}
+
+.dapp-placeholder h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dapp-placeholder p {
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+.dapp-btn {
+  margin-top: 10px;
+  padding: 10px 24px;
+  background: var(--primary-500);
+  border: none;
+  border-radius: var(--radius-btn);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+}
