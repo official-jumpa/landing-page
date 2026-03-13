@@ -424,26 +424,7 @@ export default function AiChat() {
         ::-webkit-scrollbar-thumb{background:#2A2A3A;border-radius:2px}
       `}</style>
       <div style={{ width: "100vw", height: "100vh", background: "#0A0A0F", display: "flex", flexDirection: "column", fontFamily: "'DM Sans','Segoe UI',sans-serif", overflow: "hidden" }}>
-        {/* Top nav — hidden on welcome */}
-        {screen !== "welcome" && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", borderBottom: "1px solid #2A2A3A", flexShrink: 0, flexWrap: "wrap", gap: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ display: "flex" }}>
-              {[{ dot: "#FF4F4F" }, { dot: "#3EC6C6" }].map((c, i) => (
-                <div key={i} style={{ width: 28, height: 28, borderRadius: "50%", background: "#9999CC", border: `2px solid ${c.dot}`, marginLeft: i === 1 ? -8 : 0 }} />
-              ))}
-            </div>
-            <span style={{ color: "#fff", fontWeight: 700, fontSize: 16 }}>Jumpa AI</span>
-          </div>
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {([["welcome","1. Welcome"],["home","2. Home"],["chat-empty","3. Chat"],["chat-responding","4. Responding"],["chat-transaction","5. Transaction"],["voice-recording","6. Voice"],["voice-processing","7. Processing"]] as [Screen,string][]).map(([s, label]) => (
-              <button key={s} onClick={() => goTo(s)} style={{ padding: "6px 12px", borderRadius: 20, border: "none", background: screen === s ? "#7B5CF5" : "#1A1A24", color: screen === s ? "#fff" : "#8888AA", fontSize: 12, cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" }}>
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-        )}
+       
 
         {/* Content */}
         <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
