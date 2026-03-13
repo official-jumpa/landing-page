@@ -5,7 +5,6 @@ type Screen =
   | "home"
   | "chat-empty"
   | "chat-responding"
-  | "chat-transaction"
   | "voice-recording"
   | "voice-processing";
 
@@ -31,6 +30,8 @@ const SUGGESTIONS = [
   "Exchange $30 to USDC Sol",
   "Exchange $30 to USDC ETh",
 ];
+
+
 
 function TypingDots() {
   return (
@@ -358,13 +359,12 @@ export default function AiChat() {
   const [showTyping, setShowTyping] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
- const renderScreen = () => {
+  const renderScreen = () => {
     switch (screen) {
       case "welcome": return <WelcomeScreen onClose={() => setScreen("home")} />;
       case "home": return <HomeScreen onPromptClick={(p) => { setInputValue(p); setMessages([]); setShowTyping(false); setScreen("chat-empty"); }} />;
       case "chat-empty":
       case "chat-responding":
-      case "chat-transaction":
         return <ChatScreen messages={messages} showTyping={showTyping} inputValue={inputValue} onInputChange={setInputValue} />;
       case "voice-recording": return <VoiceScreen processing={false} />;
       case "voice-processing": return <VoiceScreen processing={true} />;
@@ -381,9 +381,6 @@ export default function AiChat() {
         ::-webkit-scrollbar-thumb{background:#2A2A3A;border-radius:2px}
       `}</style>
       <div style={{ width: "100vw", height: "100vh", background: "#0A0A0F", display: "flex", flexDirection: "column", fontFamily: "'DM Sans','Segoe UI',sans-serif", overflow: "hidden" }}>
-       
-
-        {/* Content */}
         <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           {renderScreen()}
         </div>
