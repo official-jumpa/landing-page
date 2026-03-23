@@ -7,6 +7,7 @@ import ServiceShortcutGrid from '../components/ServiceShortcutGrid';
 import QuickTransferList from '../components/QuickTransferList';
 import PromoBannerCard from '../components/PromoBannerCard';
 import VirtualAccountBanner from '../components/VirtualAccountBanner';
+import HomeLoanCard from '../components/HomeLoanCard';
 import { useHomeLayout } from '../../../layouts/HomeLayout';
 
 export default function JumpaDashboard() {
@@ -36,6 +37,7 @@ export default function JumpaDashboard() {
       <QuickTransferList />
       <PromoBannerCard />
       <VirtualAccountBanner onClick={onVirtualAccount} />
+      <HomeLoanCard onOpenLoanDetail={onDApp} />
       <div className="home-bottom-spacer" />
     </div>
   );

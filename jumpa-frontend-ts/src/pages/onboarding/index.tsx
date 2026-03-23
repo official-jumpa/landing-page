@@ -1,30 +1,38 @@
 "use client"
 
 import { useState, useRef } from "react";
-import { Button } from "@/components/ui/button"; // Assuming Shadcn Button
+import { motion, AnimatePresence } from "framer-motion";
 import LoginDrawer from "../auth/login/login-drawer";
 import CreateAccountDrawer from "../home/create-account/create-account-drawer";
+import "./Onboarding.css";
+
+// Assets
+import onboardOne from "../../assets/images/illustrations/onboard-one.svg";
+import nairaIcon from "../../assets/images/illustrations/naira.svg";
+import onboardTwo from "../../assets/images/illustrations/onboard-two.svg";
+import coinImg from "../../assets/images/illustrations/IMG_5094 1.svg";
+import dollarIcon from "../../assets/images/illustrations/Dollar coin - Gold@4x 1.svg";
+import chartRing from "../../assets/images/illustrations/IMG_5091 1.svg";
+import listCards from "../../assets/images/illustrations/Group 120 (2).png";
+import goldCoinSecondary from "../../assets/images/illustrations/Dollar coin - Gold@4x 1 (1).svg";
+import chartMockup from "../../assets/images/illustrations/Chart Mockup III 1.svg";
 
 const onboardingData = [
     {
         title: "Trade in chats.",
         description: "Jumpa lets you trade, send money, and move between stablecoins and local cash.",
-        image: "/image-1.svg", // The foreground illustration
     },
     {
         title: "Trade together.",
         description: "Pool funds. Assign a trader. Automatically split profits. Built for communities.",
-        image: "/onboarding-2.png",
     },
     {
         title: "Your Financial Agent.",
         description: "Set price alerts. Auto-execute trades. Split bills with voice. Save toward goals.",
-        image: "/onboarding-3.png",
     },
     {
         title: "Smart Saving Agent.",
         description: "A smart savings agent that invests your funds to help you reach your goals.",
-        image: "/onboarding-4.png",
     },
 ];
 
@@ -89,37 +97,77 @@ export default function Onboarding() {
     // --- ONBOARDING CAROUSEL SCREENS (1-4) ---
     const screenData = onboardingData[currentScreen];
 
+    const renderIllustration = () => {
+        switch (currentScreen) {
+            case 0:
+                return (
+                    <div className="onboarding-illustration-container">
+                        <img src={onboardOne} className="onboarding-img-one" alt="" />
+                        <img src={nairaIcon} className="onboarding-naira-icon" alt="" />
+                    </div>
+                );
+            case 1:
+                return (
+                    <div className="onboarding-illustration-container">
+                        <img src={onboardTwo} className="onboarding-img-two" alt="" />
+                        <img src={coinImg} className="onboarding-coin-left" alt="" />
+                        <img src={dollarIcon} className="onboarding-coin-right" alt="" />
+                    </div>
+                );
+            case 2:
+                return (
+                    <div className="onboarding-illustration-container">
+                        <img src={chartRing} className="onboarding-chart-ring" alt="" />
+                        <img src={listCards} className="onboarding-list-cards" alt="" />
+                        <img src={goldCoinSecondary} className="onboarding-gold-coin-alt" alt="" />
+                    </div>
+                );
+            case 3:
+                return (
+                    <div className="onboarding-illustration-container">
+                        <img src={chartMockup} className="onboarding-chart-mockup" alt="" />
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
     return (
         <div
-            // Adjusted padding and top spacing for tight mobile viewports
-            className="fixed inset-0 w-full h-dvh bg-black bg-cover bg-center bg-no-repeat flex flex-col justify-between items-center pb-6 sm:pb-10 px-4 sm:px-6 pt-10 sm:pt-14"
+            className="fixed inset-0 w-full h-dvh bg-black bg-cover bg-center bg-no-repeat flex flex-col items-center pb-6 sm:pb-10 overflow-hidden"
             style={{ backgroundImage: "url('/gradient-bg.svg')" }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
-            {/* Top Bar with Skip Button */}
-            <div className="w-full flex justify-end max-w-md z-10">
+            {/* Top Bar with Skip Button - Positioned with 4x literal top offset */}
+            <div className="w-full flex justify-end max-w-md z-50 px-4 sm:px-6" style={{ marginTop: "107px" }}>
                 <button
                     onClick={handleSkip}
-                    // Shrunk the skip button slightly on tiny screens
-                    className="bg-white/10 hover:bg-white/20 text-white text-[12px] sm:text-[13px] font-medium px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl backdrop-blur-md transition-colors"
+                    className="onboarding-skip-button"
                 >
-                    Skip
+                    <span className="onboarding-skip-text">Skip</span>
                 </button>
             </div>
 
-            {/* Foreground Image Area */}
-            <div className="flex-1 w-full max-w-md flex flex-col items-center justify-center my-4 sm:my-6 z-10 min-h-0">
-                {/* Added max-h and object-contain so the image doesn't squish the text on short screens */}
-                <img 
-                    src={screenData.image} 
-                    className="w-full h-full max-h-[45dvh] sm:max-h-[50dvh] object-contain" 
-                    alt={screenData.title} 
-                />
+            {/* Foreground Image Area - Removed max-w-md to allow edge-to-edge */}
+            <div className="flex-1 w-full flex flex-col items-center justify-center my-4 sm:my-6 z-10 min-h-0 relative">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentScreen}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        className="w-full h-full flex items-center justify-center"
+                    >
+                        {renderIllustration()}
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
-            {/* Bottom Content (Text & Buttons) */}
-            <div className="w-full max-w-md flex flex-col items-center pb-2 sm:pb-6 z-10 shrink-0">
+            {/* Bottom Content (Text & Buttons) - Added px-4 back here */}
+            <div className="w-full max-w-md flex flex-col items-center pb-2 sm:pb-6 z-10 shrink-0 px-4 sm:px-6">
                 {/* Pagination Dots */}
                 <div className="flex gap-2 justify-center mb-4 sm:mb-6">
                     {onboardingData.map((_, index) => (
@@ -133,22 +181,31 @@ export default function Onboarding() {
                 </div>
 
                 {/* Inline Title & Description */}
-                <div className="text-center mb-6 sm:mb-8 px-1 sm:px-2 min-h-[60px]">
-                    <p className="text-[13px] sm:text-[15px] leading-relaxed tracking-wide text-[#9CA3AF]">
-                        <span className="font-bold text-white pr-1 block sm:inline mb-1 sm:mb-0">
-                            {screenData.title}
-                        </span>
-                        {screenData.description}
-                    </p>
-                </div>
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentScreen}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                        className="text-center mb-6 sm:mb-8 px-1 sm:px-2 min-h-[100px]"
+                    >
+                        <p className="text-[14px] sm:text-[16px] leading-relaxed tracking-wide text-[#9CA3AF]">
+                            <span className="font-bold text-white pr-1 block sm:inline mb-1 sm:mb-0">
+                                {screenData.title}
+                            </span>
+                            {screenData.description}
+                        </p>
+                    </motion.div>
+                </AnimatePresence>
 
                 {/* Get Started Button */}
-                <Button
+                <button
                     onClick={handleNext}
-                    className="w-full h-11 sm:h-12 rounded-xl bg-white hover:bg-gray-200 text-black text-[14px] sm:text-[15px] font-semibold shadow-none transition-colors"
+                    className="onboarding-get-started-button"
                 >
-                    Get started
-                </Button>
+                    <span className="onboarding-get-started-text">Get started</span>
+                </button>
             </div>
         </div>
     );

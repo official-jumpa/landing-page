@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: 12px 24px;
   padding-top: 60px;
   background-color: var(--bg-app);
 }
@@ -11,28 +11,57 @@
 .top-bar-right {
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: 8px;
 }
 
 .icon-btn {
   background: none;
   border: none;
   cursor: pointer;
-  padding: var(--space-xs);
+  width: var(--topbar-control-size);
+  height: var(--topbar-control-size);
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+}
+
+.icon-btn--plain {
+  background: transparent;
+}
+
+.icon-btn--surface {
+  background: var(--bg-surface-2);
+}
+
+.icon-image {
+  display: block;
+}
+
+.icon-image--hamburger {
+  width: var(--topbar-hamburger-icon-size);
+  height: var(--topbar-hamburger-icon-size);
+}
+
+.icon-image--settings {
+  width: var(--topbar-settings-icon-size);
+  height: var(--topbar-settings-icon-size);
+}
+
+.icon-image--notification {
+  width: var(--topbar-notification-icon-size);
+  height: var(--topbar-notification-icon-size);
 }
 
 .icon-btn:active {
-  background: rgba(255, 255, 255, 0.08);
+  opacity: 0.78;
 }
 
 .user-avatar {
-  width: 36px;
-  height: 36px;
+  width: var(--topbar-avatar-size);
+  height: var(--topbar-avatar-size);
   border-radius: 50%;
   overflow: hidden;
   background: var(--bg-surface-2);

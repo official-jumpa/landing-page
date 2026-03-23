@@ -1,0 +1,172 @@
+.onboarding-illustration-container {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  /* Increased to accommodate larger overflow */
+  margin: 0 auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Screen 1 */
+.onboarding-img-one {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-2.72deg);
+  opacity: 1;
+  max-width: none !important;
+}
+
+.onboarding-naira-icon {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  top: 140.4px;
+  left: -62.3px;
+  transform: rotate(3.5deg);
+  opacity: 1;
+  object-fit: contain;
+}
+
+/* Screen 2 */
+.onboarding-img-two {
+  position: absolute;
+  width: 1296px;
+  height: 1296px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
+  object-fit: contain;
+}
+
+.onboarding-coin-left {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  top: 82%;
+  left: 44%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
+  object-fit: contain;
+  z-index: 2;
+}
+
+.onboarding-coin-right {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: 82%;
+  left: 58%;
+  transform: translate(-50%, -50%) rotate(-5.18deg);
+  opacity: 1;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* Screen 3 */
+.onboarding-chart-ring {
+  position: absolute;
+  width: 430px;
+  height: 430px;
+  top: -50px;
+  right: -85px;
+  transform: rotate(0deg);
+  opacity: 1;
+  object-fit: contain;
+  z-index: 2;
+  max-width: none !important;
+}
+
+.onboarding-list-cards {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  top: 55%;
+  left: 45%;
+  transform: translate(-45%, -50%) rotate(-4deg);
+  opacity: 1;
+  object-fit: contain;
+  z-index: 1;
+  max-width: none !important;
+}
+
+/* Styled Buttons */
+.onboarding-skip-button {
+  width: 86px;
+  height: 70px;
+  background: #2D2D2D !important;
+  border-radius: 20px;
+  padding: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 17px;
+  opacity: 1;
+  border: none;
+  cursor: pointer;
+  z-index: 50;
+  transition: opacity 0.2s ease;
+}
+
+.onboarding-skip-text {
+  font-family: 'Geist', sans-serif !important;
+  font-weight: 400;
+  font-size: 23.8px;
+  line-height: 145%;
+  color: white;
+  text-align: center;
+}
+
+.onboarding-get-started-button {
+  width: 583px;
+  height: 85px;
+  background: #FFFFFF !important;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  padding: 0;
+}
+
+.onboarding-get-started-text {
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 400;
+  font-size: 27.28px;
+  line-height: 40.88px;
+  color: #000000;
+  text-align: center;
+}
+
+.onboarding-gold-coin-alt {
+  position: absolute;
+  width: 596px;
+  height: 596px;
+  top: 190px;
+  left: -60px;
+  transform: rotate(-1.63deg);
+  opacity: 1;
+  object-fit: contain;
+  z-index: 3;
+}
+
+/* Screen 4 */
+.onboarding-chart-mockup {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
+  object-fit: contain;
+  z-index: 1;
+  max-width: none !important;
+}
