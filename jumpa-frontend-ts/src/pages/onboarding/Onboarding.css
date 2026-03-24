@@ -1,18 +1,26 @@
+/* ===========================================
+   ONBOARDING RESPONSIVE CSS
+   Mobile-first: base = small phones (≤374px)
+   375px = standard phones
+   430px = large phones (iPhone 14 Pro Max)
+   768px = tablets
+   =========================================== */
+
+/* --- ILLUSTRATION CONTAINER --- */
 .onboarding-illustration-container {
   position: relative;
   width: 100%;
-  height: 800px;
-  /* Increased to accommodate larger overflow */
+  height: 500px;
   margin: 0 auto;
   overflow: visible;
   pointer-events: none;
 }
 
-/* Screen 1 */
+/* --- SCREEN 1 --- */
 .onboarding-img-one {
   position: absolute;
-  width: 600px;
-  height: 600px;
+  width: 380px;
+  height: 380px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-2.72deg);
@@ -22,20 +30,20 @@
 
 .onboarding-naira-icon {
   position: absolute;
-  width: 240px;
-  height: 240px;
+  width: 156px;
+  height: 156px;
   top: 140.4px;
-  left: -62.3px;
+  left: -40px;
   transform: rotate(3.5deg);
   opacity: 1;
   object-fit: contain;
 }
 
-/* Screen 2 */
+/* --- SCREEN 2 --- */
 .onboarding-img-two {
   position: absolute;
-  width: 600px;
-  height: 600px;
+  width: 380px;
+  height: 380px;
   top: 45%;
   left: 55%;
   transform: translate(-50%, -50%) rotate(0deg);
@@ -45,8 +53,8 @@
 
 .onboarding-coin-left {
   position: absolute;
-  width: 280px;
-  height: 280px;
+  width: 182px;
+  height: 182px;
   top: 72%;
   left: 49%;
   transform: translate(-50%, -50%) rotate(0deg);
@@ -57,8 +65,8 @@
 
 .onboarding-coin-right {
   position: absolute;
-  width: 400px;
-  height: 400px;
+  width: 260px;
+  height: 260px;
   top: 72%;
   left: 62%;
   transform: translate(-50%, -50%) rotate(-5.18deg);
@@ -67,13 +75,13 @@
   z-index: 1;
 }
 
-/* Screen 3 */
+/* --- SCREEN 3 --- */
 .onboarding-chart-ring {
   position: absolute;
-  width: 330px;
-  height: 330px;
+  width: 215px;
+  height: 215px;
   top: 110px;
-  right: -60px;
+  right: -40px;
   transform: rotate(0deg);
   opacity: 1;
   object-fit: contain;
@@ -83,8 +91,8 @@
 
 .onboarding-list-cards {
   position: absolute;
-  width: 420px;
-  height: 420px;
+  width: 273px;
+  height: 273px;
   top: 55%;
   left: 45%;
   transform: translate(-45%, -50%) rotate(-4deg);
@@ -94,7 +102,38 @@
   max-width: none !important;
 }
 
-/* Styled Buttons */
+.onboarding-gold-coin-alt {
+  position: absolute;
+  width: 322px;
+  height: 322px;
+  top: 300px;
+  left: -55px;
+  transform: rotate(-1.63deg);
+  opacity: 1;
+  object-fit: contain;
+  z-index: 3;
+}
+
+/* --- SCREEN 4 --- */
+.onboarding-chart-mockup {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
+  object-fit: contain;
+  z-index: 1;
+  max-width: none !important;
+}
+
+/* --- SKIP BAR (responsive top margin) --- */
+.onboarding-skip-bar {
+  margin-top: 60px;
+}
+
+/* --- BUTTONS --- */
 .onboarding-skip-button {
   width: 43.04px;
   height: 35px;
@@ -123,8 +162,8 @@
 }
 
 .onboarding-get-started-button {
-  width: 345.69px;
-  height: 50px;
+  width: 280px;
+  height: 44px;
   background: #FFFFFF !important;
   border-radius: 20px;
   display: flex;
@@ -135,48 +174,23 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   padding: 0;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 
 .onboarding-get-started-text {
   font-family: 'Poppins', sans-serif !important;
   font-weight: 400;
-  font-size: 15.28px;
+  font-size: 14px;
   line-height: 40.88px;
   color: #000000;
   text-align: center;
 }
 
-.onboarding-gold-coin-alt {
-  position: absolute;
-  width: 496px;
-  height: 496px;
-  top: 300px;
-  left: -85px;
-  transform: rotate(-1.63deg);
-  opacity: 1;
-  object-fit: contain;
-  z-index: 3;
-}
-
-/* Screen 4 */
-.onboarding-chart-mockup {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(0deg);
-  opacity: 1;
-  object-fit: contain;
-  z-index: 1;
-  max-width: none !important;
-}
-
+/* --- TYPOGRAPHY --- */
 .onboarding-title {
   font-family: 'Geist', sans-serif !important;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 15px;
   line-height: 145%;
   letter-spacing: -0.02em;
   text-align: center;
@@ -187,7 +201,7 @@
 .onboarding-description {
   font-family: 'Geist', sans-serif !important;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 15px;
   line-height: 145%;
   letter-spacing: -0.02em;
   text-align: center;
@@ -196,12 +210,249 @@
 }
 
 .onboarding-text-container {
-  width: 380px;
-  min-height: 90px;
+  width: 260px;
+  min-height: 66px;
   text-align: center;
-  margin: 0 auto 32px auto;
+  margin: 0 auto 16px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+/* ===========================================
+   MEDIUM PHONES (375px - 429px)
+   iPhone 12, 13, Pixel, Galaxy S series
+   =========================================== */
+@media (min-width: 375px) {
+  .onboarding-illustration-container {
+    height: 650px;
+  }
+
+  /* Screen 1 */
+  .onboarding-img-one {
+    width: 480px;
+    height: 480px;
+  }
+  .onboarding-naira-icon {
+    width: 192px;
+    height: 192px;
+    left: -50px;
+  }
+
+  /* Screen 2 */
+  .onboarding-img-two {
+    width: 480px;
+    height: 480px;
+  }
+  .onboarding-coin-left {
+    width: 224px;
+    height: 224px;
+  }
+  .onboarding-coin-right {
+    width: 320px;
+    height: 320px;
+  }
+
+  /* Screen 3 */
+  .onboarding-chart-ring {
+    width: 270px;
+    height: 270px;
+    right: -50px;
+  }
+  .onboarding-list-cards {
+    width: 340px;
+    height: 340px;
+  }
+  .onboarding-gold-coin-alt {
+    width: 400px;
+    height: 400px;
+    left: -70px;
+  }
+
+  /* Skip bar */
+  .onboarding-skip-bar {
+    margin-top: 80px;
+  }
+
+  /* Buttons */
+  .onboarding-get-started-button {
+    width: 310px;
+    height: 47px;
+    margin-bottom: 24px;
+  }
+  .onboarding-get-started-text {
+    font-size: 14.5px;
+  }
+
+  /* Typography */
+  .onboarding-title {
+    font-size: 17px;
+  }
+  .onboarding-description {
+    font-size: 17px;
+  }
+  .onboarding-text-container {
+    width: 320px;
+    min-height: 75px;
+    margin-bottom: 24px;
+  }
+}
+
+/* ===========================================
+   LARGE PHONES (430px+)
+   iPhone 14 Pro Max, 15 Plus — CURRENT DESIGN
+   =========================================== */
+@media (min-width: 430px) {
+  .onboarding-illustration-container {
+    height: 800px;
+  }
+
+  /* Screen 1 */
+  .onboarding-img-one {
+    width: 600px;
+    height: 600px;
+  }
+  .onboarding-naira-icon {
+    width: 240px;
+    height: 240px;
+    left: -62.3px;
+  }
+
+  /* Screen 2 */
+  .onboarding-img-two {
+    width: 600px;
+    height: 600px;
+  }
+  .onboarding-coin-left {
+    width: 280px;
+    height: 280px;
+  }
+  .onboarding-coin-right {
+    width: 400px;
+    height: 400px;
+  }
+
+  /* Screen 3 */
+  .onboarding-chart-ring {
+    width: 330px;
+    height: 330px;
+    right: -60px;
+  }
+  .onboarding-list-cards {
+    width: 420px;
+    height: 420px;
+  }
+  .onboarding-gold-coin-alt {
+    width: 496px;
+    height: 496px;
+    left: -85px;
+  }
+
+  /* Skip bar */
+  .onboarding-skip-bar {
+    margin-top: 107px;
+  }
+
+  /* Buttons */
+  .onboarding-get-started-button {
+    width: 345.69px;
+    height: 50px;
+    margin-bottom: 32px;
+  }
+  .onboarding-get-started-text {
+    font-size: 15.28px;
+  }
+
+  /* Typography */
+  .onboarding-title {
+    font-size: 20px;
+  }
+  .onboarding-description {
+    font-size: 20px;
+  }
+  .onboarding-text-container {
+    width: 380px;
+    min-height: 90px;
+    margin-bottom: 32px;
+  }
+}
+
+/* ===========================================
+   TABLETS (768px+)
+   iPad, iPad Air, Android tablets
+   =========================================== */
+@media (min-width: 768px) {
+  .onboarding-illustration-container {
+    height: 900px;
+  }
+
+  /* Screen 1 */
+  .onboarding-img-one {
+    width: 700px;
+    height: 700px;
+  }
+  .onboarding-naira-icon {
+    width: 280px;
+    height: 280px;
+    left: -70px;
+  }
+
+  /* Screen 2 */
+  .onboarding-img-two {
+    width: 700px;
+    height: 700px;
+  }
+  .onboarding-coin-left {
+    width: 330px;
+    height: 330px;
+  }
+  .onboarding-coin-right {
+    width: 460px;
+    height: 460px;
+  }
+
+  /* Screen 3 */
+  .onboarding-chart-ring {
+    width: 380px;
+    height: 380px;
+    right: -70px;
+  }
+  .onboarding-list-cards {
+    width: 490px;
+    height: 490px;
+  }
+  .onboarding-gold-coin-alt {
+    width: 580px;
+    height: 580px;
+    left: -100px;
+  }
+
+  /* Skip bar */
+  .onboarding-skip-bar {
+    margin-top: 120px;
+  }
+
+  /* Buttons */
+  .onboarding-get-started-button {
+    width: 380px;
+    height: 54px;
+    margin-bottom: 40px;
+  }
+  .onboarding-get-started-text {
+    font-size: 16px;
+  }
+
+  /* Typography */
+  .onboarding-title {
+    font-size: 22px;
+  }
+  .onboarding-description {
+    font-size: 22px;
+  }
+  .onboarding-text-container {
+    width: 420px;
+    min-height: 100px;
+    margin-bottom: 40px;
+  }
 }

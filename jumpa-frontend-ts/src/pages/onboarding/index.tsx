@@ -141,7 +141,7 @@ export default function Onboarding() {
             onTouchEnd={handleTouchEnd}
         >
             {/* Top Bar with Skip Button - Positioned with 4x literal top offset */}
-            <div className="w-full flex justify-end max-w-md z-50 px-4 sm:px-6" style={{ marginTop: "107px" }}>
+            <div className="w-full flex justify-end max-w-md z-50 px-4 sm:px-6 onboarding-skip-bar">
                 <button
                     onClick={handleSkip}
                     className="onboarding-skip-button"
