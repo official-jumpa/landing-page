@@ -1,6 +1,6 @@
-import React, { useState, useCallback, createContext, useContext } from 'react';
+import React, { useState, useCallback, useEffect, createContext, useContext } from 'react';
 import './HomeLayout.css';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 // Components
 import TopBar from '../components/common/TopBar';
@@ -40,9 +40,19 @@ export const useHomeLayout = () => {
 const HomeLayout: React.FC = () => {
   const navigate = useNavigate();
 
+  const location = useLocation();
+
   // Navigation & Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState("home");
+
+  // Reset currentPage to 'home' when navigating to sub-routes
+  // so that the <Outlet /> renders the routed page component
+  useEffect(() => {
+    if (location.pathname !== '/home') {
+      setCurrentPage('home');
+    }
+  }, [location.pathname]);
 
   // Home State
   const [balanceHidden, setBalanceHidden] = useState(false);

@@ -173,9 +173,8 @@ export default function Onboarding() {
                     {onboardingData.map((_, index) => (
                         <div
                             key={index}
-                            className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
-                                currentScreen === index ? "bg-white" : "bg-white/30"
-                            }`}
+                            className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${currentScreen === index ? "bg-white" : "bg-white/30"
+                                }`}
                         />
                     ))}
                 </div>

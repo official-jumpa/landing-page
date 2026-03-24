@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import dataIcon from '../../../assets/icons/services/data.svg';
 import groupIcon from '../../../assets/icons/services/group.svg';
 import airtimeIcon from '../../../assets/icons/services/airtime.svg';
@@ -10,21 +11,22 @@ interface ServiceItem {
   label: string;
   icon: string;
   isMore?: boolean;
+  route?: string;
 }
 
 const homeServices: ServiceItem[] = [
-  { label: 'Data', icon: dataIcon },
-  { label: 'Group', icon: groupIcon },
-  { label: 'Airtime', icon: airtimeIcon },
+  { label: 'Data', icon: dataIcon, route: '/home/airtime' },
+  { label: 'Group', icon: groupIcon, route: '/home/group' },
+  { label: 'Airtime', icon: airtimeIcon, route: '/home/airtime' },
   { label: 'More', icon: moreIcon, isMore: true },
 ];
 
 const allServices: ServiceItem[] = [
-  { label: 'Data', icon: dataIcon },
-  { label: 'Group', icon: groupIcon },
-  { label: 'Airtime', icon: airtimeIcon },
-  { label: 'Prediction', icon: predictionIcon },
-  { label: 'Bills', icon: billsIcon },
+  { label: 'Data', icon: dataIcon, route: '/home/airtime' },
+  { label: 'Group', icon: groupIcon, route: '/home/group' },
+  { label: 'Airtime', icon: airtimeIcon, route: '/home/airtime' },
+  { label: 'Prediction', icon: predictionIcon, route: '/home/3rikeAi' },
+  { label: 'Bills', icon: billsIcon, route: '/home/savings' },
 ];
 
 interface ServiceShortcutGridProps {
@@ -34,6 +36,28 @@ interface ServiceShortcutGridProps {
 
 const ServiceShortcutGrid: React.FC<ServiceShortcutGridProps> = ({ onWithdraw, onDApp }) => {
   const [showAll, setShowAll] = useState(false);
+  const navigate = useNavigate();
+
+  const handleServiceClick = (service: ServiceItem) => {
+    if (service.isMore) {
+      setShowAll(true);
+      return;
+    }
+    if (service.route) {
+      navigate(service.route);
+    }
+  };
+
+  const handleAllServiceClick = (service: ServiceItem) => {
+    if (service.label === 'DApp' && onDApp) {
+      onDApp();
+    } else if (service.label === 'Withdraw' && onWithdraw) {
+      onWithdraw();
+    } else if (service.route) {
+      setShowAll(false);
+      navigate(service.route);
+    }
+  };
 
   return (
     <>
@@ -42,7 +66,7 @@ const ServiceShortcutGrid: React.FC<ServiceShortcutGridProps> = ({ onWithdraw, o
           <button
             key={s.label}
             className="service-item"
-            onClick={s.isMore ? () => setShowAll(true) : undefined}
+            onClick={() => handleServiceClick(s)}
             type="button"
           >
             <img src={s.icon} alt="" className="service-icon" />
@@ -64,7 +88,7 @@ const ServiceShortcutGrid: React.FC<ServiceShortcutGridProps> = ({ onWithdraw, o
                   key={s.label} 
                   className="service-item" 
                   type="button"
-                  onClick={s.label === 'DApp' ? onDApp : s.label === 'Withdraw' ? onWithdraw : undefined}
+                  onClick={() => handleAllServiceClick(s)}
                 >
                   <img src={s.icon} alt="" className="service-icon" />
                   <span className="service-label">{s.label}</span>
