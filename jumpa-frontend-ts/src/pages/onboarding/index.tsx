@@ -141,7 +141,7 @@ export default function Onboarding() {
             onTouchEnd={handleTouchEnd}
         >
             {/* Top Bar with Skip Button - Positioned with 4x literal top offset */}
-            <div className="w-full flex justify-end max-w-md z-50 px-4 sm:px-6 onboarding-skip-bar">
+            <div className="w-full flex justify-end max-w-md z-50 px-4 sm:px-6" style={{ marginTop: "107px" }}>
                 <button
                     onClick={handleSkip}
                     className="onboarding-skip-button"
@@ -173,9 +173,8 @@ export default function Onboarding() {
                     {onboardingData.map((_, index) => (
                         <div
                             key={index}
-                            className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
-                                currentScreen === index ? "bg-white" : "bg-white/30"
-                            }`}
+                            className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${currentScreen === index ? "bg-white" : "bg-white/30"
+                                }`}
                         />
                     ))}
                 </div>

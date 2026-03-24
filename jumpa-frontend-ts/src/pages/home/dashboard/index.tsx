@@ -1,5 +1,6 @@
 import '../HomePage.css';
 import '../home.css';
+import { useNavigate } from 'react-router-dom';
 import WalletSelectorCard from '../components/WalletSelectorCard';
 import WalletBalanceCard from '../components/WalletBalanceCard';
 import QuickActionRow from '../components/QuickActionRow';
@@ -11,6 +12,7 @@ import HomeLoanCard from '../components/HomeLoanCard';
 import { useHomeLayout } from '../../../layouts/HomeLayout';
 
 export default function JumpaDashboard() {
+  const navigate = useNavigate();
   const {
     balanceHidden,
     onToggleBalance,
@@ -26,7 +28,7 @@ export default function JumpaDashboard() {
       <WalletSelectorCard onDropdown={onWalletDropdown} />
       <WalletBalanceCard hidden={balanceHidden} onToggle={onToggleBalance} />
       <QuickActionRow 
-        onSend={() => {}} 
+        onSend={() => navigate('/send')} 
         onReceive={onWalletDropdown} 
         onSwap={onTrade} 
       />
@@ -37,7 +39,7 @@ export default function JumpaDashboard() {
       <QuickTransferList />
       <PromoBannerCard />
       <VirtualAccountBanner onClick={onVirtualAccount} />
-      <HomeLoanCard onOpenLoanDetail={onDApp} />
+      <HomeLoanCard onOpenLoanDetail={() => navigate('/home/loan')} />
       <div className="home-bottom-spacer" />
     </div>
   );
