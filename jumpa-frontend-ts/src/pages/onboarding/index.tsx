@@ -188,13 +188,11 @@ export default function Onboarding() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.3 }}
-                        className="text-center mb-6 sm:mb-8 px-1 sm:px-2 min-h-[100px]"
+                        className="onboarding-text-container"
                     >
-                        <p className="text-[14px] sm:text-[16px] leading-relaxed tracking-wide text-[#9CA3AF]">
-                            <span className="font-bold text-white pr-1 block sm:inline mb-1 sm:mb-0">
-                                {screenData.title}
-                            </span>
-                            {screenData.description}
+                        <p className="inline-block px-4">
+                            <span className="onboarding-title">{screenData.title} </span>
+                            <span className="onboarding-description">{screenData.description}</span>
                         </p>
                     </motion.div>
                 </AnimatePresence>

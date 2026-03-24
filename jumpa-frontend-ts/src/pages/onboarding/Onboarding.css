@@ -34,10 +34,10 @@
 /* Screen 2 */
 .onboarding-img-two {
   position: absolute;
-  width: 1296px;
-  height: 1296px;
-  top: 50%;
-  left: 50%;
+  width: 600px;
+  height: 600px;
+  top: 45%;
+  left: 55%;
   transform: translate(-50%, -50%) rotate(0deg);
   opacity: 1;
   object-fit: contain;
@@ -47,8 +47,8 @@
   position: absolute;
   width: 280px;
   height: 280px;
-  top: 82%;
-  left: 44%;
+  top: 72%;
+  left: 49%;
   transform: translate(-50%, -50%) rotate(0deg);
   opacity: 1;
   object-fit: contain;
@@ -59,8 +59,8 @@
   position: absolute;
   width: 400px;
   height: 400px;
-  top: 82%;
-  left: 58%;
+  top: 72%;
+  left: 62%;
   transform: translate(-50%, -50%) rotate(-5.18deg);
   opacity: 1;
   object-fit: contain;
@@ -70,10 +70,10 @@
 /* Screen 3 */
 .onboarding-chart-ring {
   position: absolute;
-  width: 430px;
-  height: 430px;
-  top: -50px;
-  right: -85px;
+  width: 330px;
+  height: 330px;
+  top: 110px;
+  right: -60px;
   transform: rotate(0deg);
   opacity: 1;
   object-fit: contain;
@@ -96,10 +96,10 @@
 
 /* Styled Buttons */
 .onboarding-skip-button {
-  width: 86px;
-  height: 70px;
+  width: 43.04px;
+  height: 35px;
   background: #2D2D2D !important;
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 17px;
   display: flex;
   align-items: center;
@@ -110,20 +110,21 @@
   cursor: pointer;
   z-index: 50;
   transition: opacity 0.2s ease;
+  margin-right: 9px;
 }
 
 .onboarding-skip-text {
   font-family: 'Geist', sans-serif !important;
   font-weight: 400;
-  font-size: 23.8px;
+  font-size: 11.92px;
   line-height: 145%;
   color: white;
   text-align: center;
 }
 
 .onboarding-get-started-button {
-  width: 583px;
-  height: 85px;
+  width: 345.69px;
+  height: 50px;
   background: #FFFFFF !important;
   border-radius: 20px;
   display: flex;
@@ -134,12 +135,13 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   padding: 0;
+  margin-bottom: 32px;
 }
 
 .onboarding-get-started-text {
   font-family: 'Poppins', sans-serif !important;
   font-weight: 400;
-  font-size: 27.28px;
+  font-size: 15.28px;
   line-height: 40.88px;
   color: #000000;
   text-align: center;
@@ -147,10 +149,10 @@
 
 .onboarding-gold-coin-alt {
   position: absolute;
-  width: 596px;
-  height: 596px;
-  top: 190px;
-  left: -60px;
+  width: 496px;
+  height: 496px;
+  top: 300px;
+  left: -85px;
   transform: rotate(-1.63deg);
   opacity: 1;
   object-fit: contain;
@@ -169,4 +171,37 @@
   object-fit: contain;
   z-index: 1;
   max-width: none !important;
+}
+
+.onboarding-title {
+  font-family: 'Geist', sans-serif !important;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 145%;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: #FFFFFF;
+  display: inline;
+}
+
+.onboarding-description {
+  font-family: 'Geist', sans-serif !important;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 145%;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: #777777;
+  display: inline;
+}
+
+.onboarding-text-container {
+  width: 380px;
+  min-height: 90px;
+  text-align: center;
+  margin: 0 auto 32px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
