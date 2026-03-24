@@ -21,6 +21,7 @@ import { type Wallet } from '../data/wallets';
 interface HomeLayoutContextType {
   balanceHidden: boolean;
   onToggleBalance: () => void;
+  onOpenMenu: () => void;
   onWalletDropdown: () => void;
   onVirtualAccount: () => void;
   onWithdrawal: () => void;
@@ -87,6 +88,7 @@ const HomeLayout: React.FC = () => {
   const contextValue: HomeLayoutContextType = {
     balanceHidden,
     onToggleBalance: () => setBalanceHidden(!balanceHidden),
+    onOpenMenu: () => setDrawerOpen(true),
     onWalletDropdown: () => setWalletListOpen(true),
     onVirtualAccount: () => setVirtualAccountOpen(true),
     onWithdrawal: () => setWithdrawOpen(true),
@@ -99,7 +101,7 @@ const HomeLayout: React.FC = () => {
       <div className="jumpa-theme-wrapper">
         <div className="phone-frame">
           <div className="app-content">
-            <TopBar onMenuClick={() => setDrawerOpen(true)} />
+            {currentPage !== 'dapp' && <TopBar onMenuClick={() => setDrawerOpen(true)} />}
             {currentPage === "home" ? (
               <Outlet />
             ) : currentPage === "trade" ? (

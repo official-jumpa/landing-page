@@ -63,6 +63,13 @@
   --space-3xl: 40px;
   --space-4xl: 48px;
 
+  /* ---- Top navigation sizing ---- */
+  --topbar-control-size: 32px;
+  --topbar-hamburger-icon-size: 32px;
+  --topbar-avatar-size: 32px;
+  --topbar-settings-icon-size: 22px;
+  --topbar-notification-icon-size: 20px;
+
   /* ---- Shadows ---- */
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.28);
   --shadow-glow: 0 0 28px rgba(124, 92, 252, 0.35);

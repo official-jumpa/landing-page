@@ -13,19 +13,19 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
   return (
     <div className="top-bar">
       <div className="top-bar-left">
-        <button className="icon-btn" onClick={onMenuClick} aria-label="Menu" type="button">
-          <img src={hamburgerIcon} alt="" width="22" height="22" />
+        <button className="icon-btn icon-btn--plain" onClick={onMenuClick} aria-label="Menu" type="button">
+          <img src={hamburgerIcon} alt="" className="icon-image icon-image--hamburger" />
         </button>
         <div className="user-avatar">
           <img src={userAvatar} alt="User" />
         </div>
       </div>
       <div className="top-bar-right">
-        <button className="icon-btn" aria-label="Settings" type="button">
-          <img src={settingsIcon} alt="" width="22" height="22" />
+        <button className="icon-btn icon-btn--surface" aria-label="Settings" type="button">
+          <img src={settingsIcon} alt="" className="icon-image icon-image--settings" />
         </button>
-        <button className="icon-btn" aria-label="Notifications" type="button">
-          <img src={notificationIcon} alt="" width="22" height="22" />
+        <button className="icon-btn icon-btn--surface" aria-label="Notifications" type="button">
+          <img src={notificationIcon} alt="" className="icon-image icon-image--notification" />
         </button>
       </div>
     </div>
