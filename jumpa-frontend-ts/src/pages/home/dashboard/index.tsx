@@ -20,7 +20,8 @@ export default function JumpaDashboard() {
     onVirtualAccount,
     onWithdrawal,
     onTrade,
-    onDApp
+    onDApp,
+    onReceive,
   } = useHomeLayout();
 
   return (
@@ -29,7 +30,7 @@ export default function JumpaDashboard() {
       <WalletBalanceCard hidden={balanceHidden} onToggle={onToggleBalance} />
       <QuickActionRow 
         onSend={() => navigate('/send')} 
-        onReceive={onWalletDropdown} 
+        onReceive={onReceive}
         onSwap={onTrade} 
       />
       <ServiceShortcutGrid 

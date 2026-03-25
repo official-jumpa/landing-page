@@ -1,0 +1,204 @@
+import React, { useCallback, useEffect, useState } from "react";
+import "./DepositMethodSheet.css";
+import closeIcon from "../../assets/icons/actions/close.svg";
+import backIcon from "../../assets/icons/actions/back.svg";
+import sendCircleIcon from "../../assets/icons/actions/send-circle.svg";
+import sideIcon from "../../assets/icons/navigation/side.svg";
+import cardIllustration from "../../assets/images/illustrations/card.svg";
+
+export interface DepositMethodSheetProps {
+  onClose: () => void;
+  onSelectBank?: () => void;
+  onSelectCrypto?: () => void;
+}
+
+const BANK_ACCOUNT_DISPLAY = "1235 3458 98";
+const BANK_ACCOUNT_COPY_VALUE = BANK_ACCOUNT_DISPLAY;
+
+const DepositMethodSheet: React.FC<DepositMethodSheetProps> = ({
+  onClose,
+  onSelectBank,
+  onSelectCrypto,
+}) => {
+  const [step, setStep] = useState<"methods" | "bank">("methods");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const t = window.setTimeout(() => setCopied(false), 2000);
+    return () => window.clearTimeout(t);
+  }, [copied]);
+
+  const goToBank = useCallback(() => {
+    onSelectBank?.();
+    setStep("bank");
+    setCopied(false);
+  }, [onSelectBank]);
+
+  const goBackToMethods = useCallback(() => {
+    setStep("methods");
+    setCopied(false);
+  }, []);
+
+  const handleCopyNumber = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(BANK_ACCOUNT_COPY_VALUE);
+      setCopied(true);
+    } catch {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = BANK_ACCOUNT_COPY_VALUE;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        setCopied(true);
+      } catch {
+        /* ignore */
+      }
+    }
+  }, []);
+
+  if (step === "bank") {
+    return (
+      <div
+        className="deposit-method-sheet deposit-method-sheet--bank"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-labelledby="deposit-bank-title"
+        aria-modal="true"
+      >
+        <div className="deposit-bank-topbar">
+          <button
+            type="button"
+            className="deposit-sheet-icon-btn"
+            onClick={goBackToMethods}
+            aria-label="Back"
+          >
+            <img src={backIcon} alt="" className="deposit-sheet-back-icon" />
+          </button>
+          <button
+            type="button"
+            className="deposit-sheet-icon-btn"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <img src={closeIcon} alt="" className="deposit-method-sheet-close-icon" />
+          </button>
+        </div>
+
+        <div className="deposit-bank-main">
+          <div className="deposit-bank-card-wrap">
+            <img
+              src={cardIllustration}
+              alt=""
+              className="deposit-bank-card-icon"
+              width={67}
+              height={54}
+            />
+          </div>
+
+          <div className="deposit-bank-headings">
+            <h2 id="deposit-bank-title" className="deposit-bank-title">
+              Bank Transfer
+            </h2>
+            <p className="deposit-bank-subtitle">
+              Transfer to the account number below.
+            </p>
+          </div>
+
+          <div className="deposit-bank-account-card">
+            <div className="deposit-bank-account-row">
+              <div className="deposit-bank-account-texts">
+                <span className="deposit-bank-account-number">{BANK_ACCOUNT_DISPLAY}</span>
+                <span className="deposit-bank-account-meta">GTBank - Ndukwe Anita</span>
+              </div>
+              <button
+                type="button"
+                className={`deposit-bank-copy-btn${copied ? " is-copied" : ""}`}
+                onClick={handleCopyNumber}
+                aria-live="polite"
+              >
+                {copied ? "Copied" : "Copy Number"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="deposit-method-sheet"
+      onClick={(e) => e.stopPropagation()}
+      role="dialog"
+      aria-labelledby="deposit-sheet-title"
+      aria-modal="true"
+    >
+      <button
+        type="button"
+        className="deposit-method-sheet-close"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        <img src={closeIcon} alt="" width={12} height={12} className="deposit-method-sheet-close-icon" />
+      </button>
+
+      <div className="deposit-method-sheet-body">
+        <img
+          src={sendCircleIcon}
+          alt=""
+          className="deposit-method-sheet-icon"
+          width={80}
+          height={80}
+        />
+
+        <div className="deposit-method-sheet-headings">
+          <h2 id="deposit-sheet-title" className="deposit-method-sheet-title">
+            Deposit
+          </h2>
+          <p className="deposit-method-sheet-subtitle">
+            Choose a method below to add funds to your account.
+          </p>
+        </div>
+
+        <div className="deposit-method-sheet-cards">
+          <button type="button" className="deposit-method-card" onClick={goToBank}>
+            <div className="deposit-method-card-row">
+              <div className="deposit-method-card-texts">
+                <span className="deposit-method-card-title deposit-method-card-title--medium">
+                  Bank Transfer
+                </span>
+                <span className="deposit-method-card-desc">
+                  Deposit from your bank account.
+                </span>
+              </div>
+              <img src={sideIcon} alt="" className="deposit-method-card-chevron" />
+            </div>
+          </button>
+
+          <button
+            type="button"
+            className="deposit-method-card"
+            onClick={() => onSelectCrypto?.()}
+          >
+            <div className="deposit-method-card-row">
+              <div className="deposit-method-card-texts">
+                <span className="deposit-method-card-title deposit-method-card-title--semibold">
+                  Crypto
+                </span>
+                <span className="deposit-method-card-desc">Receive crypto coins.</span>
+              </div>
+              <img src={sideIcon} alt="" className="deposit-method-card-chevron" />
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DepositMethodSheet;

@@ -9,6 +9,7 @@ import FloatingSupportButton from '../components/common/FloatingSupportButton';
 import WalletListModal from '../components/modal/WalletListModal';
 import WalletDetailsModal from '../components/modal/WalletDetailsModal';
 import VirtualAccountModal from '../components/modal/VirtualAccountModal';
+import DepositMethodSheet from '../components/modal/DepositMethodSheet';
 import PinEntryScreen from '../components/pin/PinEntryScreen';
 import PrivateKeyScreen from '../components/wallet/PrivateKeyScreen';
 import WithdrawOptions from '../pages/home/withdraw/options';
@@ -27,6 +28,7 @@ interface HomeLayoutContextType {
   onWithdrawal: () => void;
   onTrade: () => void;
   onDApp: () => void;
+  onReceive: () => void;
 }
 
 const HomeLayoutContext = createContext<HomeLayoutContextType | undefined>(undefined);
@@ -61,6 +63,7 @@ const HomeLayout: React.FC = () => {
   const [walletListOpen, setWalletListOpen] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const [virtualAccountOpen, setVirtualAccountOpen] = useState(false);
+  const [depositSheetOpen, setDepositSheetOpen] = useState(false);
 
   // Security flow
   const [pinScreenOpen, setPinScreenOpen] = useState(false);
@@ -104,6 +107,7 @@ const HomeLayout: React.FC = () => {
     onWithdrawal: () => setWithdrawOpen(true),
     onTrade: () => { setCurrentPage("trade"); navigate("/home"); },
     onDApp: () => { setCurrentPage("dapp"); navigate("/home"); },
+    onReceive: () => setDepositSheetOpen(true),
   };
 
   return (
@@ -158,11 +162,12 @@ const HomeLayout: React.FC = () => {
             onClose={() => setDrawerOpen(false)}
           />
 
-          {(walletListOpen || selectedWallet || virtualAccountOpen) && !drawerOpen && (
+          {(walletListOpen || selectedWallet || virtualAccountOpen || depositSheetOpen) && !drawerOpen && (
             <div className="overlay-blur" onClick={() => {
               setWalletListOpen(false);
               setSelectedWallet(null);
               setVirtualAccountOpen(false);
+              setDepositSheetOpen(false);
             }} />
           )}
 
@@ -185,6 +190,10 @@ const HomeLayout: React.FC = () => {
             <VirtualAccountModal
               onClose={() => setVirtualAccountOpen(false)}
             />
+          )}
+
+          {depositSheetOpen && (
+            <DepositMethodSheet onClose={() => setDepositSheetOpen(false)} />
           )}
         </div>
       </div>
