@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import './DAppPage.css';
-import hamburgerIcon from '../../../assets/icons/navigation/hamburger.svg';
 import successIcon from '../../../assets/images/illustrations/success.png';
 import closeIcon from '../../../assets/icons/actions/close.svg';
 import backIcon from '../../../assets/icons/actions/back.svg';
@@ -19,7 +18,6 @@ import correctIcon from '../../../assets/icons/actions/correct.svg';
 import arrowIcon from '../../../assets/icons/actions/Arrow 2.svg';
 import markIcon from '../../../assets/icons/actions/mark.svg';
 import arrowUpDownIcon from '../../../assets/icons/actions/arrow-up-down.svg';
-import { useHomeLayout } from '../../../layouts/HomeLayout';
 
 function DAppPage() {
   const [activeTab, setActiveTab] = useState<'market' | 'borrow' | 'rwa'>('market');
@@ -32,7 +30,6 @@ function DAppPage() {
   const [isBorrowProcessing, setIsBorrowProcessing] = useState(false);
   const [borrowSuccessOpen, setBorrowSuccessOpen] = useState(false);
   const loanFlow = useLoanRepayFlow();
-  const { onOpenMenu } = useHomeLayout();
   const borrowAddress = '7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV';
 
   useEffect(() => {
@@ -121,16 +118,7 @@ function DAppPage() {
   return (
     <div className="dapp-page">
       {showMarketHeader ? (
-        <>
-          <div className="market-header">
-            <button type="button" className="market-menu-btn" onClick={onOpenMenu} aria-label="Open sidebar menu">
-              <img src={hamburgerIcon} alt="" className="market-menu-icon" />
-            </button>
-            <h1 className="market-title">Market</h1>
-          </div>
-
-          <MarketTabs activeTab={activeTab} onTabChange={setActiveTab} />
-        </>
+        <MarketTabs activeTab={activeTab} onTabChange={setActiveTab} />
       ) : null}
 
       {activeTab === 'market' ? (

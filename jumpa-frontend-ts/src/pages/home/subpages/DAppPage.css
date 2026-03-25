@@ -1,46 +1,9 @@
 .dapp-page {
-  min-height: calc(100vh - 120px);
-  padding: 76px var(--space-xl) calc(var(--space-4xl) + 40px);
+  min-height: calc(100dvh - 120px);
+  padding: 0 var(--space-xl) calc(var(--space-4xl) + 40px);
   display: flex;
   flex-direction: column;
   gap: var(--space-base);
-}
-
-.market-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.market-menu-icon {
-  width: var(--topbar-hamburger-icon-size);
-  height: var(--topbar-hamburger-icon-size);
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-
-.market-menu-btn {
-  border: none;
-  background: transparent;
-  padding: 0;
-  width: var(--topbar-control-size);
-  height: var(--topbar-control-size);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.market-menu-btn:active {
-  opacity: 0.75;
-}
-
-.market-title {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
 }
 
 .market-tabs {
@@ -1210,13 +1173,8 @@
 
 @media (max-width: 420px) {
   .dapp-page {
-    padding-top: 76px;
     padding-left: var(--space-base);
     padding-right: var(--space-base);
-  }
-
-  .market-title {
-    font-size: 28px;
   }
 
   .watchlist-card,
