@@ -43,7 +43,7 @@ interface Message {
 const SUGGESTIONS = [
   "How do i invest $100 ?",
   "Analyze my portfolio and suggest investment",
-  "Analyze my portfolio and suggest investment",
+  "Show my recent transfers and fees",
   "Buy AMA when price is -10% with 100$",
   "Exchange $30 to USDC Sol",
   "Exchange $30 to USDC ETh",
@@ -123,7 +123,7 @@ function WelcomeOverlay({ onClose }: { onClose: () => void }) {
 
 function ChatHomePanel({ onPromptClick }: { onPromptClick: (p: string) => void }) {
   return (
-    <>
+    <div className="chat-home-panel-inner">
       <header className="chat-home-header">
         <div className="chat-home-title-block">
           <p className="chat-home-title-line">HI Anita</p>
@@ -146,7 +146,7 @@ function ChatHomePanel({ onPromptClick }: { onPromptClick: (p: string) => void }
           </button>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
