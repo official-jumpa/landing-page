@@ -111,7 +111,7 @@ const HomeLayout: React.FC = () => {
       <div className="jumpa-theme-wrapper">
         <div className="phone-frame">
           <div className="app-content">
-            {currentPage !== 'dapp' && <TopBar onMenuClick={() => setDrawerOpen(true)} />}
+            <TopBar onMenuClick={() => setDrawerOpen(true)} />
             {currentPage === "home" ? (
               <Outlet />
             ) : currentPage === "trade" ? (
