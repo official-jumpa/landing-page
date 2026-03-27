@@ -1,21 +1,10 @@
 "use client"
 
-import { useState, useRef, type ReactNode } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoginDrawer from "../auth/login/login-drawer";
 import CreateAccountDrawer from "../home/create-account/create-account-drawer";
-import "../../layouts/HomeLayout.css";
 import "./Onboarding.css";
-
-function OnboardingDeviceFrame({ children }: { children: ReactNode }) {
-    return (
-        <div className="jumpa-theme-wrapper">
-            <div className="phone-frame">
-                <div className="relative h-full min-h-0 w-full">{children}</div>
-            </div>
-        </div>
-    );
-}
 
 // Assets
 import onboardOne from "../../assets/images/illustrations/onboard-one.svg";
@@ -84,22 +73,24 @@ export default function Onboarding() {
     // --- FINAL SCREEN (WALLET CREATION) ---
     if (currentScreen === onboardingData.length) {
         return (
-            <OnboardingDeviceFrame>
-                <div className="flex h-full min-h-0 w-full flex-col justify-center items-center overflow-y-auto overflow-x-hidden bg-black bg-cover bg-center bg-no-repeat pb-6 sm:pb-10 px-4 sm:px-6">
-                    <div className="flex items-center justify-center mb-8 sm:mb-12 w-[80%] sm:w-full max-w-[250px]">
-                        <img
-                            src="/large-logo.svg"
-                            alt="Jumpa Logo"
-                            className="w-full h-full object-contain"
-                        />
-                    </div>
-
-                    <div className="w-full flex flex-col gap-3 max-w-md pb-4 sm:pb-6">
-                        <CreateAccountDrawer />
-                        <LoginDrawer />
-                    </div>
+            <div
+                // Reduced padding on small screens (px-4, pb-6)
+                className="fixed inset-0 w-full h-dvh bg-black bg-cover bg-center bg-no-repeat flex flex-col justify-center items-center pb-6 sm:pb-10 px-4 sm:px-6"
+            >
+                {/* Scaled down bottom margin on small screens to prevent crowding */}
+                <div className="flex items-center justify-center mb-8 sm:mb-12 w-[80%] sm:w-full max-w-[250px]">
+                    <img
+                        src="/large-logo.svg"
+                        alt="Jumpa Logo"
+                        className="w-full h-full object-contain"
+                    />
                 </div>
-            </OnboardingDeviceFrame>
+
+                <div className="w-full flex flex-col gap-3 max-w-md pb-4 sm:pb-6">
+                    <CreateAccountDrawer />
+                    <LoginDrawer />
+                </div>
+            </div>
         );
     }
 
@@ -143,13 +134,12 @@ export default function Onboarding() {
     };
 
     return (
-        <OnboardingDeviceFrame>
-            <div
-                className="flex h-full min-h-0 w-full flex-col items-center overflow-hidden bg-black bg-cover bg-center bg-no-repeat pb-6 sm:pb-10"
-                style={{ backgroundImage: "url('/gradient-bg.svg')" }}
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-            >
+        <div
+            className="fixed inset-0 w-full h-dvh bg-black bg-cover bg-center bg-no-repeat flex flex-col items-center pb-6 sm:pb-10 overflow-hidden"
+            style={{ backgroundImage: "url('/gradient-bg.svg')" }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+        >
             {/* Top Bar with Skip Button - Positioned with 4x literal top offset */}
             <div className="w-full flex justify-end max-w-md z-50 px-4 sm:px-6" style={{ marginTop: "107px" }}>
                 <button
@@ -214,7 +204,6 @@ export default function Onboarding() {
                     <span className="onboarding-get-started-text">Get started</span>
                 </button>
             </div>
-            </div>
-        </OnboardingDeviceFrame>
+        </div>
     );
 }
