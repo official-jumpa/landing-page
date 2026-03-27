@@ -125,7 +125,7 @@ export default function Onboarding() {
                 );
             case 2:
                 return (
-                    <div className="onboarding-illustration-container">
+                    <div className="onboarding-illustration-container onboarding-illustration--screen3">
                         <img src={chartRing} className="onboarding-chart-ring" alt="" />
                         <img src={listCards} className="onboarding-list-cards" alt="" />
                         <img src={goldCoinSecondary} className="onboarding-gold-coin-alt" alt="" />
@@ -150,7 +150,6 @@ export default function Onboarding() {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
             >
-            {/* Top Bar with Skip Button - Positioned with 4x literal top offset */}
             <div className="w-full flex justify-end max-w-md z-50 px-4 sm:px-6" style={{ marginTop: "107px" }}>
                 <button
                     onClick={handleSkip}
@@ -177,7 +176,7 @@ export default function Onboarding() {
             </div>
 
             {/* Bottom Content (Text & Buttons) - Added px-4 back here */}
-            <div className="w-full max-w-md flex flex-col items-center pb-2 sm:pb-6 z-10 shrink-0 px-4 sm:px-6">
+            <div className="onboarding-carousel-footer w-full max-w-md flex flex-col items-center pb-2 sm:pb-6 z-10 shrink-0 px-4 sm:px-6">
                 {/* Pagination Dots */}
                 <div className="flex gap-2 justify-center mb-4 sm:mb-6">
                     {onboardingData.map((_, index) => (
