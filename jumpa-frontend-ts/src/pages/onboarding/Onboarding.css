@@ -205,3 +205,47 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Wider viewports only (laptop browser at 100%, etc.) — phones stay < 600px */
+@media (min-width: 600px) {
+  /*
+   * Onboarding slide 3 only: nudge the left gold coin (onboarding-gold-coin-alt)
+   * left so it meets the edge on wide viewports (mobile unchanged).
+   */
+  .onboarding-illustration--screen3 .onboarding-gold-coin-alt {
+    left: -98px;
+  }
+
+  /* All carousel slides: extra space above dots / copy / CTA on wide viewports */
+  .onboarding-carousel-footer {
+    margin-top: 36px;
+    padding-top: 24px;
+  }
+
+  .onboarding-title,
+  .onboarding-description {
+    font-size: 17px;
+  }
+
+  .onboarding-text-container {
+    width: min(340px, 100%);
+    min-height: 80px;
+    margin-bottom: 26px;
+  }
+
+  .onboarding-get-started-button {
+    width: min(304px, calc(100% - 24px));
+    height: 44px;
+    border-radius: 18px;
+    margin-bottom: 26px;
+  }
+
+  .onboarding-get-started-text {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .onboarding-skip-text {
+    font-size: 11px;
+  }
+}
