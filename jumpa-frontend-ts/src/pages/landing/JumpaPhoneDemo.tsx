@@ -3,8 +3,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUp, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
-/** Pocket marketing primary (matches getpocketapp.com --color-primary) */
-const PRIMARY = "#00BCFB";
+/** Jumpa brand primary (matches app --primary-500 in HomeLayout.css) */
+const PRIMARY = "#7C5CFC";
 
 /** Tight stack so shadows aren’t clipped by the landing `main` overflow; still reads “floating”. */
 const COMPOSER_SHADOW =
@@ -428,9 +428,8 @@ function Composer({
 
   return (
     <motion.div
-      className="relative mx-auto w-full pl-4 pr-3 py-2.5 sm:pl-5 sm:py-3"
+      className="relative mx-auto w-full rounded-[22px] pl-3 pr-2.5 py-2 sm:rounded-[28px] sm:pl-5 sm:pr-3 sm:py-3"
       style={{
-        borderRadius: 28,
         backgroundColor: "#ffffff",
         boxShadow: COMPOSER_SHADOW,
         border: "1px solid rgba(228, 228, 228, 0.25)",
@@ -438,15 +437,15 @@ function Composer({
       animate={{ scale: hasText ? 1.02 : 1 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
     >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+      <div className="flex items-center justify-between gap-2 sm:gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
           <Plus
-            className="size-6 shrink-0"
+            className="size-[18px] shrink-0 sm:size-6"
             style={{ color: PRIMARY }}
             strokeWidth={2}
             aria-hidden
           />
-          <span className="relative flex min-w-0 flex-1 text-[13px] font-bold text-black sm:text-sm lg:text-[15px]">
+          <span className="relative flex min-w-0 flex-1 text-xs font-bold text-black sm:text-sm lg:text-[15px]">
             <span className="truncate">{currentText}</span>
             {isTyping && hasText ? (
               <span
@@ -458,13 +457,13 @@ function Composer({
         </div>
         <motion.button
           type="button"
-          className="relative flex size-10 shrink-0 items-center justify-center rounded-full"
+          className="relative flex size-8 shrink-0 items-center justify-center rounded-full sm:size-10"
           style={{ backgroundColor: PRIMARY }}
           animate={{ scale: hasText && !isTyping ? 1.1 : 1 }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
           aria-label="Send"
         >
-          <ArrowUp className="size-5 text-white" strokeWidth={2.5} />
+          <ArrowUp className="size-4 text-white sm:size-5" strokeWidth={2.5} />
         </motion.button>
       </div>
     </motion.div>
@@ -485,8 +484,8 @@ export default function JumpaPhoneDemo() {
   };
 
   return (
-    <div className="relative flex shrink-0 flex-col items-center">
-      <div className="relative z-20 mb-2 flex w-full max-w-[290px] justify-center sm:mb-2.5 sm:max-w-none lg:mb-1">
+    <div className="jumpa-landing-phone-demo relative flex shrink-0 flex-col items-center">
+      <div className="relative z-20 mb-1 hidden w-full max-w-[290px] justify-center sm:mb-2.5 sm:flex sm:max-w-none lg:mb-1">
         <Link
           to="/onboarding"
           className="jumpa-landing-jump-in inline-flex items-center rounded-full border border-violet-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-violet-700 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-[background-color,border-color,box-shadow,transform] hover:border-violet-300 hover:bg-violet-50/90 hover:shadow-[0_2px_8px_-2px_rgba(109,40,217,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 active:scale-[0.98] sm:px-4 sm:py-2 sm:text-sm lg:px-2.5 lg:py-1 lg:text-[11px] lg:leading-tight lg:focus-visible:ring-1 lg:focus-visible:ring-offset-1"
@@ -642,8 +641,8 @@ export default function JumpaPhoneDemo() {
         </div>
       </div>
 
-      {/* Composer overlaps frame bottom */}
-      <div className="relative z-10 -mt-4 w-[calc(280px*1.1)] sm:-mt-5 sm:w-[calc(340px*1.1)] lg:w-[calc(380px*1.1*0.82)]">
+      {/* Composer overlaps frame bottom — narrower on mobile */}
+      <div className="relative z-10 -mt-4 w-[calc(280px*0.94)] sm:-mt-5 sm:w-[calc(340px*1.1)] lg:w-[calc(380px*1.1*0.82)]">
         <Composer currentText={demo.composerText} isTyping={demo.isTyping} />
       </div>
     </div>
