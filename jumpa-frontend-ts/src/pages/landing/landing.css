@@ -4,6 +4,8 @@
   --jumpa-landing-surface-mid: #ffffff;
   --jumpa-landing-surface-bottom: #ffffff;
   background-color: #ffffff;
+  /* One-screen landing: avoid body rubber-band scroll on iOS */
+  overscroll-behavior: none;
 }
 
 /* Clips the scrolling track so pills don’t hard-cut at the viewport edge */
@@ -73,9 +75,9 @@
   z-index: 0;
   display: flex;
   width: max-content;
-  /* Wider gaps on small viewports — matches Pocket-style prominent pills */
-  gap: 0.875rem;
-  padding-block: 0.35rem;
+  /* Compact on phones so the landing fits 100dvh without scrolling */
+  gap: 0.5rem;
+  padding-block: 0.125rem;
   animation: jumpa-landing-marquee 48s linear infinite;
   will-change: transform;
 }
@@ -88,6 +90,13 @@
 }
 
 @media (min-width: 1024px) {
+  .jumpa-landing-marquee__track {
+    gap: 0.625rem;
+    padding-block: 0.15rem;
+  }
+}
+
+@media (min-width: 1280px) {
   .jumpa-landing-marquee__track {
     gap: 0.875rem;
     padding-block: 0.35rem;
@@ -132,11 +141,10 @@
     animation: none;
   }
 
+  /* Keep one-screen layout: no horizontal scroll strip on phones */
   .jumpa-landing-marquee__viewport {
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
     mask-image: none;
   }
 
@@ -187,6 +195,29 @@
   }
   50% {
     opacity: 0;
+  }
+}
+
+/* Short phones (e.g. SE): shrink demo slightly so the full landing stays in dvh */
+@media (max-width: 639px) and (max-height: 700px) {
+  .jumpa-landing-phone-demo {
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 639px) and (max-height: 620px) {
+  .jumpa-landing-phone-demo {
+    transform: scale(0.84);
+    transform-origin: top center;
+  }
+}
+
+/* Very short phones (e.g. 568px CSS height) */
+@media (max-width: 639px) and (max-height: 580px) {
+  .jumpa-landing-phone-demo {
+    transform: scale(0.8);
+    transform-origin: top center;
   }
 }
 
