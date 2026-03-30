@@ -2,7 +2,6 @@ import SendScreens from "./pages/send/SendScreens";
 import AiChat from "./pages/chat/AiChat";
 import "./App.css";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import Layout from "@/components/ui/layout";
 import { CreateAccountForm, ForgotPasswordEmailForm, Landing, LoginForm, NoMatch, Onboarding, VerifyAccountForm, VerificationSuccess, VerificationFailed, VerificationFailedForm, LoanDashboard, LoanRequestSuccess, LoanNotification, SavingsOnboarding, SavingsDashboard, Loan, Savings, Verification, SavingsTargetDashboard, SavingsTargetForm, SavingsSummary, SavingsNotification, SavingsTargetSuccess, AiDashboard, DriverNotification, Withdraw, SetPinWithdraw, WithdrawBankDetails, WithdrawSendMoney, Settings, SettingsHome, SettingsProfile, PaymentSettings, ChangePaymentPin, WithdrawCryptoAsset, Investment, InvestmentHome, AirtimeFlow, GroupFlow } from "./pages";
 import SelectCryptoAsset from "./pages/home/withdraw/crypto/select-crypto";
 import LoginSuccess from "./pages/auth/login/login-sucess";
@@ -36,10 +35,7 @@ function App() {
           <Route path="/private-keys" element={<ImportPrivateKey />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/send" element={<SendMoneyFlow />} />
-          {/* Shared layout (Navbar + Footer are inside Layout) */}
-          <Route element={<Layout />}>
-            <Route path="/" element={<Landing />} />
-          </Route>
+          <Route path="/" element={<Landing />} />
 
           {/* Driver - Wrapped in Isolated HomeLayout */}
           <Route path="/home" element={<HomeLayout />}>
