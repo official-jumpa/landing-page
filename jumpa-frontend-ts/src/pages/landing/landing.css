@@ -91,6 +91,13 @@
 
 @media (min-width: 1024px) {
   .jumpa-landing-marquee__track {
+    gap: 0.625rem;
+    padding-block: 0.15rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .jumpa-landing-marquee__track {
     gap: 0.875rem;
     padding-block: 0.35rem;
   }

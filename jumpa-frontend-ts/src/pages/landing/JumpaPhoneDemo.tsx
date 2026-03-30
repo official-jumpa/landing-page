@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUp, Plus } from "lucide-react";
-import { Link } from "react-router-dom";
-
-/** Jumpa brand primary (matches app --primary-500 in HomeLayout.css) */
-const PRIMARY = "#7C5CFC";
+/** Landing / demo accent (composer, send, user bubble) */
+const PRIMARY = "#aa2aff";
 
 /** Tight stack so shadows aren’t clipped by the landing `main` overflow; still reads “floating”. */
 const COMPOSER_SHADOW =
   "0 1px 0 rgba(0, 0, 0, 0.04), 0 8px 20px -6px rgba(0, 0, 0, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.06)";
 
-/** Landing only: lg+ frame is scaled so headline + marquee + “for you” fit in `dvh`. */
-const LG_LANDING_SCALE = 0.82;
-/** Matches scaled frame height in layout (511 × scale) so `dvh` landing fits below. */
+/** Landing only: lg+ frame scaled to fit headline + marquee + “for you” in one viewport (laptops). */
+const LG_LANDING_SCALE = 0.72;
+/** Reserved row height for scaled phone (visual height ≈ 511 × scale). */
 const LG_LANDING_LAYOUT_H = Math.round(511 * LG_LANDING_SCALE);
+/** Composer width matches horizontal scale of lg frame (380 × 1.1 × scale). */
+const LG_COMPOSER_WIDTH_PX = Math.round(380 * 1.1 * LG_LANDING_SCALE);
 
 const SCENARIOS = [
   {
@@ -428,7 +428,7 @@ function Composer({
 
   return (
     <motion.div
-      className="relative mx-auto w-full rounded-[22px] pl-3 pr-2.5 py-2 sm:rounded-[28px] sm:pl-5 sm:pr-3 sm:py-3"
+      className="relative mx-auto w-full rounded-[20px] pl-4 pr-3 py-1 sm:rounded-[28px] sm:pl-5 sm:pr-3 sm:py-3"
       style={{
         backgroundColor: "#ffffff",
         boxShadow: COMPOSER_SHADOW,
@@ -440,12 +440,12 @@ function Composer({
       <div className="flex items-center justify-between gap-2 sm:gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
           <Plus
-            className="size-[18px] shrink-0 sm:size-6"
+            className="size-[17px] shrink-0 sm:size-6"
             style={{ color: PRIMARY }}
             strokeWidth={2}
             aria-hidden
           />
-          <span className="relative flex min-w-0 flex-1 text-xs font-bold text-black sm:text-sm lg:text-[15px]">
+          <span className="relative flex min-w-0 flex-1 text-[11px] font-bold leading-tight text-black sm:text-sm lg:text-[15px]">
             <span className="truncate">{currentText}</span>
             {isTyping && hasText ? (
               <span
@@ -457,13 +457,13 @@ function Composer({
         </div>
         <motion.button
           type="button"
-          className="relative flex size-8 shrink-0 items-center justify-center rounded-full sm:size-10"
+          className="relative flex size-7 shrink-0 items-center justify-center rounded-full sm:size-10"
           style={{ backgroundColor: PRIMARY }}
           animate={{ scale: hasText && !isTyping ? 1.1 : 1 }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
           aria-label="Send"
         >
-          <ArrowUp className="size-4 text-white sm:size-5" strokeWidth={2.5} />
+          <ArrowUp className="size-3.5 text-white sm:size-5" strokeWidth={2.5} />
         </motion.button>
       </div>
     </motion.div>
@@ -485,14 +485,7 @@ export default function JumpaPhoneDemo() {
 
   return (
     <div className="jumpa-landing-phone-demo relative flex shrink-0 flex-col items-center">
-      <div className="relative z-20 mb-1 hidden w-full max-w-[290px] justify-center sm:mb-2.5 sm:flex sm:max-w-none lg:mb-1">
-        <Link
-          to="/onboarding"
-          className="jumpa-landing-jump-in inline-flex items-center rounded-full border border-violet-200/90 bg-white px-3.5 py-1.5 text-xs font-semibold text-violet-700 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-[background-color,border-color,box-shadow,transform] hover:border-violet-300 hover:bg-violet-50/90 hover:shadow-[0_2px_8px_-2px_rgba(109,40,217,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 active:scale-[0.98] sm:px-4 sm:py-2 sm:text-sm lg:px-2.5 lg:py-1 lg:text-[11px] lg:leading-tight lg:focus-visible:ring-1 lg:focus-visible:ring-offset-1"
-        >
-          Jump in
-        </Link>
-      </div>
+      {/* Jump in lives in landing hero above this component (all breakpoints). */}
       {/* Mobile — matches webpack `block sm:hidden` */}
       <div className="relative sm:hidden" style={{ width: 290, height: 376 }}>
         <SideButtonsMobile />
@@ -586,7 +579,7 @@ export default function JumpaPhoneDemo() {
 
       {/* lg+ — scaled on landing so the rest of the page fits laptop viewports */}
       <div
-        className="relative hidden w-full justify-center overflow-visible lg:flex"
+        className="relative hidden w-full justify-center overflow-hidden lg:flex"
         style={{ height: LG_LANDING_LAYOUT_H }}
       >
         <div
@@ -641,8 +634,15 @@ export default function JumpaPhoneDemo() {
         </div>
       </div>
 
-      {/* Composer overlaps frame bottom — narrower on mobile */}
-      <div className="relative z-10 -mt-4 w-[calc(280px*0.94)] sm:-mt-5 sm:w-[calc(340px*1.1)] lg:w-[calc(380px*1.1*0.82)]">
+      {/* Composer overlaps frame bottom */}
+      <div
+        className="relative z-10 -mt-4 w-[calc(280px*1.1)] sm:-mt-5 sm:w-[calc(340px*1.1)] lg:-mt-4 lg:w-[var(--jumpa-lg-composer-w)]"
+        style={
+          {
+            "--jumpa-lg-composer-w": `${LG_COMPOSER_WIDTH_PX}px`,
+          } as CSSProperties
+        }
+      >
         <Composer currentText={demo.composerText} isTyping={demo.isTyping} />
       </div>
     </div>
