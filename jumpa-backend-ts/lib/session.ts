@@ -23,12 +23,14 @@ export async function createSession(payload: SessionPayload): Promise<void> {
     .setIssuedAt()
     .setExpirationTime(`${SESSION_TTL_SECONDS}s`)
     .sign(secretKey);
+  
+  const isProd = process.env.NODE_ENV === "production";
 
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
     maxAge: SESSION_TTL_SECONDS,
     path: "/",
   });
