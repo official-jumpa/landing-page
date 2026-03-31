@@ -136,6 +136,15 @@ export default function SaveRecoveryPhrase() {
         setBankWords((prev) => [...prev, word]);
     };
 
+    const handleSelectWord = (word: string) => {
+        // Find the first empty slot among missing indices
+        const firstEmptyIndex = MISSING_INDICES.find((idx) => filledSlots[idx] === null);
+        if (firstEmptyIndex === undefined) return;
+
+        setFilledSlots((prev) => ({ ...prev, [firstEmptyIndex]: word }));
+        setBankWords((prev) => prev.filter((w) => w !== word));
+    };
+
     // --- Import mode: validate and navigate with the user's phrase ---
     const handleImportSubmit = () => {
         const words = importInput.trim().split(/\s+/);
@@ -249,7 +258,7 @@ export default function SaveRecoveryPhrase() {
                             Phrase, they can access your wallet. Don't share it with anyone, ever.
                         </>
                     ) : (
-                        "Select and drag the missing words in the correct order."
+                        "Click to select and drag the missing words in the correct order."
                     )}
                 </p>
 
@@ -328,7 +337,8 @@ export default function SaveRecoveryPhrase() {
                                 key={`bank-${index}`}
                                 draggable
                                 onDragStart={(e) => handleDragStart(e, word)}
-                                className="bg-[#18181A] cursor-grab active:cursor-grabbing hover:bg-[#262626] border border-[#262626] rounded-lg px-3 py-2.5 text-[13px] font-medium flex justify-center items-center transition-colors shadow-sm"
+                                onClick={() => handleSelectWord(word)}
+                                className="bg-[#18181A] cursor-pointer active:scale-95 hover:bg-[#262626] border border-[#262626] rounded-lg px-3 py-2.5 text-[13px] font-medium flex justify-center items-center transition-all shadow-sm"
                             >
                                 {word}
                             </div>
