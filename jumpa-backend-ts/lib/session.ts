@@ -26,7 +26,9 @@ export async function createSession(payload: SessionPayload): Promise<void> {
   
   const isProd = process.env.NODE_ENV === "production";
 
+  const isProd = process.env.NODE_ENV === "production";
   const cookieStore = await cookies();
+  
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: isProd,

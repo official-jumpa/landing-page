@@ -18,8 +18,14 @@ export const GET = withAuth(async (req, { address }) => {
       return NextResponse.json({ recipients: [] });
     }
 
+    const ROUTER_ADDRESS = "0xeD53235cC3E9d2d464E9c408B95948836648870B";
+    const WFLOW_ADDRESS = "0xd3bF53DAC106A0290B0483EcBC89d40FcC961f3e";
+
     const recipients = await TransactionModel.aggregate([
-      { $match: { userId: wallet._id } },
+      { $match: { 
+          userId: wallet._id,
+          toAddress: { $nin: [ROUTER_ADDRESS, WFLOW_ADDRESS] }
+      } },
       { $sort: { createdAt: -1 } },
       { $group: { 
           _id: "$toAddress", 

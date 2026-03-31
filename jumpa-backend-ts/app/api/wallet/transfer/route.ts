@@ -33,7 +33,7 @@ const flowTestnet = defineChain({
 
 const ethPublicClient = createPublicClient({
   chain: mainnet,
-  transport: http("https://eth.llamarpc.com"),
+  transport: http("https://cloudflare-eth.com"),
 });
 
 const flowPublicClient = createPublicClient({
@@ -43,12 +43,12 @@ const flowPublicClient = createPublicClient({
 
 const ethWalletClient = createWalletClient({
   chain: mainnet,
-  transport: http("https://eth.llamarpc.com"),
+  transport: http("https://cloudflare-eth.com"),
 });
 
 const flowWalletClient = createWalletClient({
   chain: flowTestnet,
-  transport: http(),
+  transport: http('https://testnet.evm.nodes.onflow.org'),
 });
 
 /**
@@ -87,29 +87,45 @@ export const POST = withAuth(async (req, { address }) => {
     console.log(`[Transfer] Using ${isFlow ? "Flow" : "Ethereum"} client. From: ${account.address}`);
 
     const amountWei = parseEther(amount);
+    const GAS_BUFFER = parseEther("0.001"); // Reserve 0.001 for gas
 
     const balance = await publicClient.getBalance({ address: account.address });
 
-    if (balance < amountWei) {
-      console.error(`[Transfer] Insufficient balance: Need ${amount}, Have ${formatEther(balance)}`);
+    if (balance < amountWei + GAS_BUFFER) {
+      console.error(`[Transfer] Insufficient balance for gas: Need ${amount} + 0.001, Have ${formatEther(balance)}`);
       return NextResponse.json({
-        error: `Insufficient ${token} balance. Have ${formatEther(balance)}, need ${amount}.`
+        error: `Insufficient ${token} for gas. Please leave at least 0.001 ${token} for transaction fees.`
       }, { status: 400 });
     }
 
+    const ROUTER_ADDRESS = "0xeD53235cC3E9d2d464E9c408B95948836648870B";
+    if (to.toLowerCase() === ROUTER_ADDRESS.toLowerCase()) {
+       return NextResponse.json({
+         error: "Incompatible Address: This is the Swap Router contract, it cannot receive native tokens directly via transfer."
+       }, { status: 400 });
+    }
+
     let hash: `0x${string}`;
-    if (isFlow) {
-      hash = await flowWalletClient.sendTransaction({
-        account,
-        to: to as `0x${string}`,
-        value: amountWei,
-      });
-    } else {
-      hash = await ethWalletClient.sendTransaction({
-        account,
-        to: to as `0x${string}`,
-        value: amountWei,
-      });
+    try {
+      console.log(`[Transfer] Preparing transaction for ${amount} ${token} to ${to}`);
+      if (isFlow) {
+        hash = await flowWalletClient.sendTransaction({
+          account,
+          to: to as `0x${string}`,
+          value: amountWei,
+          chain: flowTestnet, // Explicitly provide chain
+        });
+      } else {
+        hash = await ethWalletClient.sendTransaction({
+          account,
+          to: to as `0x${string}`,
+          value: amountWei,
+          chain: mainnet, // Explicitly provide chain
+        });
+      }
+    } catch (sendErr: any) {
+      console.error("[Transfer Send Error]", sendErr);
+      throw sendErr;
     }
     console.log(`[Transfer] Transaction sent! Hash: ${hash}`);
 

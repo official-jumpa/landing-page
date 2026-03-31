@@ -109,7 +109,7 @@ function TypingDots() {
             width: 11,
             height: 11,
             borderRadius: "50%",
-            background: "#FF4F9A",
+            background: "rgb(124, 92, 252)",
             display: "inline-block",
             animation: `jbounce 1.2s ${i * 0.2}s infinite ease-in-out`,
           }}
@@ -374,10 +374,10 @@ function ChatScreen({
 
   return (
     <div className="ai-chat-chat-screen">
-      <div className="px-5 pt-4 flex justify-end">
+      <div className="px-5 flex justify-end">
         <button
           onClick={onBack}
-          className="text-white/40 text-[10px] uppercase tracking-wider hover:text-white transition-colors"
+          className="text-white/40 text-xs uppercase tracking-wider hover:text-white transition-colors py-4"
         >
           Close Chat
         </button>
@@ -390,19 +390,20 @@ function ChatScreen({
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
                   <div
                     style={{
-                      background: "#F0EEFA",
-                      color: "#6A59CE",
+                      background: "rgba(124, 92, 252, 0.15)",
+                      color: "#fff",
                       padding: "12px 16px",
                       borderRadius: "18px 18px 4px 18px",
                       fontSize: 13,
                       maxWidth: 260,
                       lineHeight: 1.5,
+                      border: "1px solid rgba(124, 92, 252, 0.1)"
                     }}
                   >
                     {m.isVoice ? "🎤 Voice message" : m.text}
                   </div>
                   {m.time && (
-                    <span style={{ color: "#25AD3E", fontSize: 11 }}>
+                    <span style={{ color: "rgb(124, 92, 252)", opacity: 0.8, fontSize: 11 }}>
                       Read • {m.time}
                     </span>
                   )}
@@ -419,7 +420,7 @@ function ChatScreen({
                   >
                     <div
                       style={{
-                        background: "#FF4F9A",
+                        background: "rgb(124, 92, 252)",
                         color: "#fff",
                         padding: "8px 16px",
                         borderRadius: 20,
@@ -432,14 +433,15 @@ function ChatScreen({
                     </div>
                     <div
                       style={{
-                        background: "#FFD6EC",
-                        color: "#8B0043",
+                        background: "rgba(255, 255, 255, 0.05)",
+                        color: "#fff",
                         padding: "12px 16px",
                         borderRadius: "4px 18px 18px 18px",
                         fontSize: 13,
                         width: "100%",
                         lineHeight: 1.7,
                         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
                         overflowWrap: "anywhere",
                         wordBreak: "break-word",
                       }}
@@ -453,8 +455,8 @@ function ChatScreen({
                 ) : (
                   <div
                     style={{
-                      background: "#FFD6EC",
-                      color: "#AA0055",
+                      background: "rgba(255, 255, 255, 0.05)",
+                      color: "#fff",
                       padding: "12px 16px",
                       borderRadius: "4px 18px 18px 18px",
                       fontSize: 13,
@@ -462,6 +464,7 @@ function ChatScreen({
                       lineHeight: 1.6,
                       whiteSpace: "pre-line",
                       boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
                       overflowWrap: "anywhere",
                       wordBreak: "break-word",
                     }}
@@ -477,7 +480,7 @@ function ChatScreen({
         {showTyping && (
           <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
             <img src={botAvatarImg} alt="" className="chat-msg-avatar chat-msg-avatar--bot" />
-            <div style={{ background: "#FF4F9A22", borderRadius: "4px 18px 18px 18px", padding: "8px 14px" }}>
+            <div style={{ background: "rgba(124, 92, 252, 0.1)", borderRadius: "4px 18px 18px 18px", padding: "8px 14px" }}>
               <TypingDots />
             </div>
           </div>
@@ -511,7 +514,7 @@ function VoiceScreen({ processing }: { processing: boolean }) {
               style={{
                 width: 3,
                 borderRadius: 2,
-                background: processing ? "#7B5CF5" : "#8888AA",
+                background: processing ? "rgb(124, 92, 252)" : "#8888AA",
                 height: `${16 + Math.abs(Math.sin(i * 0.7)) * 20}px`,
                 opacity: 0.6 + Math.abs(Math.sin(i * 0.5)) * 0.4,
                 animation: processing ? `vwave 1s ${i * 0.02}s infinite alternate ease-in-out` : "none",
@@ -545,7 +548,7 @@ function VoiceScreen({ processing }: { processing: boolean }) {
             height: 40,
             borderRadius: "50%",
             border: "none",
-            background: "#7B5CF5",
+            background: "rgb(124, 92, 252)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -853,7 +856,7 @@ export default function AiChat() {
     if (showHomeShell) {
       return (
         <>
-          <div className="chat-main-panel">
+          <div className="chat-main-pane">
             {!hideHomeDiscover ? <ChatHomePanel onBack={() => navigate("/home")} onPromptClick={(p) => {
               setInputValue(p);
               setMessages([]);

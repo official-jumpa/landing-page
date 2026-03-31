@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import "./DepositMethodSheet.css";
 import closeIcon from "../../assets/icons/actions/close.svg";
 import backIcon from "../../assets/icons/actions/back.svg";
@@ -147,7 +148,7 @@ const DepositMethodSheet: React.FC<DepositMethodSheetProps> = ({
   if (step === "crypto") {
     return (
       <div
-        className="deposit-method-sheet deposit-method-sheet--bank"
+        className="deposit-method-sheet deposit-method-sheet--bank deposit-method-sheet--crypto"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
       >
@@ -160,18 +161,20 @@ const DepositMethodSheet: React.FC<DepositMethodSheetProps> = ({
           </button>
         </div>
 
-        <div className="deposit-bank-main">
-          <div className="deposit-bank-headings">
+        <div className="deposit-bank-main" style={{ marginTop: 60 }}>
+          <div className="deposit-bank-headings" style={{ minHeight: "auto" }}>
             <h2 className="deposit-bank-title">Receive {selectedSymbol || "Crypto"}</h2>
             <p className="deposit-bank-subtitle text-center">
-              {/* Scan the QR code or  */}
-              Copy the address below
+              Scan the QR code or copy the address below
             </p>
           </div>
 
-          <div className="mx-auto my-6 flex flex-col items-center justify-center rounded-2xl bg-white/5 p-8 border border-white/10">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 font-semibold">Your Wallet Address</span>
-            <span className="text-sm font-mono text-white text-center break-all leading-relaxed max-w-[200px]">
+          <div className="deposit-qr-wrapper">
+            <div className="deposit-qr-code-box">
+              <QRCodeSVG value={address || ""} size={160} />
+            </div>
+            <span className="deposit-qr-label">Your Wallet Address</span>
+            <span className="deposit-qr-address">
               {address}
             </span>
           </div>

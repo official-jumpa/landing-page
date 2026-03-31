@@ -22,7 +22,7 @@ const flowTestnet = defineChain({
 
 const ethClient = createPublicClient({
   chain: mainnet,
-  transport: http("https://eth.llamarpc.com"),
+  transport: http("https://cloudflare-eth.com"),
 });
 
 const flowEvmClient = createPublicClient({
