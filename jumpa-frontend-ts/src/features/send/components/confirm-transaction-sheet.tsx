@@ -8,6 +8,7 @@ type ConfirmTransactionSheetProps = {
   onOpenChange: (open: boolean) => void;
   recipient: Recipient;
   amountDisplay: string;
+  tokenSymbol: string;
   processing: boolean;
   onMakePayment: () => void;
 };
@@ -17,6 +18,7 @@ export default function ConfirmTransactionSheet({
   onOpenChange,
   recipient,
   amountDisplay,
+  tokenSymbol,
   processing,
   onMakePayment,
 }: ConfirmTransactionSheetProps) {
@@ -27,23 +29,25 @@ export default function ConfirmTransactionSheet({
           <div className="flex items-start justify-between">
             <div>
               <p className="text-base text-zinc-400">You Pay</p>
-              <p className="mt-1 text-lg font-semibold leading-none text-white">{amountDisplay}</p>
+              <p className="mt-1 text-lg font-semibold leading-none text-white">{amountDisplay} {tokenSymbol}</p>
             </div>
-            <span className="inline-flex items-center rounded-full bg-zinc-700 px-3 py-2 text-sm text-zinc-200">
-              Naira
+            <span className="inline-flex items-center rounded-full bg-zinc-700 px-3 py-2 text-sm text-zinc-200 uppercase">
+              {tokenSymbol}
             </span>
           </div>
-          <p className="mt-2 text-right text-sm text-zinc-500">20000.00 Naira</p>
+          <p className="mt-2 text-right text-sm text-zinc-500">Processing on Network</p>
         </div>
 
         <div className="rounded-3xl bg-zinc-800 p-5">
-          <p className="text-base text-zinc-400">To:</p>
+          <p className="text-base text-zinc-400">To Address:</p>
           <div className="mt-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-11 w-11 rounded-full bg-zinc-100" />
+              <div className="h-11 w-11 rounded-full bg-zinc-100 flex items-center justify-center text-xs font-bold text-zinc-800">
+                {recipient.address?.slice(-2).toUpperCase() || "??"}
+              </div>
               <div>
-                <p className="text-md text-white">{recipient.name}</p>
-                <p className="text-sm text-zinc-500">{recipient.id}</p>
+                <p className="text-md text-white break-all">{recipient.address}</p>
+                <p className="text-sm text-zinc-500">{recipient.name}</p>
               </div>
             </div>
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
@@ -55,15 +59,15 @@ export default function ConfirmTransactionSheet({
         <div className="space-y-4 px-1 pt-2">
           <div className="flex items-center justify-between border-b border-dotted border-zinc-600 pb-3">
             <span className="text-md text-zinc-200">Amount</span>
-            <span className="text-lg text-zinc-100">N{amountDisplay}</span>
+            <span className="text-lg text-zinc-100">{amountDisplay} {tokenSymbol}</span>
           </div>
           <div className="flex items-center justify-between border-b border-dotted border-zinc-600 pb-3">
-            <span className="text-md text-zinc-200">Bank</span>
-            <span className="text-lg text-zinc-100">{recipient.bank}</span>
+            <span className="text-md text-zinc-200">Network</span>
+            <span className="text-lg text-zinc-100">{tokenSymbol === 'FLOW' ? 'Flow EVM' : 'Ethereum'}</span>
           </div>
           <div className="flex items-center justify-between border-b border-dotted border-zinc-600 pb-3">
             <span className="text-md text-zinc-200">Fee</span>
-            <span className="text-lg text-zinc-100">0.1 USDC</span>
+            <span className="text-lg text-zinc-100">Estimated Gas</span>
           </div>
         </div>
 

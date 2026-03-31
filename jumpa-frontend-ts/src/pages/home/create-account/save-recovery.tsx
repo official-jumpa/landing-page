@@ -1,44 +1,83 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { generatePhrase } from "@/lib/api";
 
-// Mocking the 12-word phrase
-const ACTUAL_WORDS = [
-    "purchase", "alert", "foster", "cupboard", 
-    "dilemma", "wealth", "frequent", "village", 
-    "gospel", "rocket", "margin", "pioneer"
-];
-
-// Indices of the words to hide (0-based: 2 = 3rd word, 3 = 4th word, 6 = 7th word)
-const MISSING_INDICES = [2, 3, 6];
+// Indices of the words to hide in the confirmation step (0-based)
+const MISSING_INDICES = [2, 5, 9];
 
 export default function SaveRecoveryPhrase() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const action = (location.state as { action?: string } | null)?.action ?? "create";
+    const isImport = action === "import";
+
     const [step, setStep] = useState<1 | 2>(1);
     const [isRevealed, setIsRevealed] = useState(false);
 
-    // State for Drag and Drop
-    const [bankWords, setBankWords] = useState<string[]>(() => {
-        // Extract the missing words and shuffle them for the bank
-        const words = MISSING_INDICES.map(i => ACTUAL_WORDS[i]);
-        return words.sort(() => Math.random() - 0.5);
-    });
-    
-    // State to track which word is in which slot
-    const [filledSlots, setFilledSlots] = useState<Record<number, string | null>>({
-        2: null, 3: null, 6: null
-    });
+    // Create flow state
+    const [phraseWords, setPhraseWords] = useState<string[]>([]);
+    const [loadingPhrase, setLoadingPhrase] = useState(!isImport);
+    const [phraseError, setPhraseError] = useState<string | null>(null);
+
+    // Import flow state
+    const [importInput, setImportInput] = useState("");
+    const [importError, setImportError] = useState<string | null>(null);
+
+    // Drag and drop state
+    const [bankWords, setBankWords] = useState<string[]>([]);
+    const [filledSlots, setFilledSlots] = useState<Record<number, string | null>>({});
 
     // Determine if Step 2 is fully filled out
-    const isStep2Complete = MISSING_INDICES.every(index => filledSlots[index] !== null);
+    const isStep2Complete = MISSING_INDICES.every((index) => filledSlots[index] !== null);
+
+    // --- Fetch phrase on mount ---
+    useEffect(() => {
+        let cancelled = false; // prevents StrictMode double-invoke race
+
+        generatePhrase()
+            .then((res) => {
+                if (cancelled) {
+                    return;
+                }
+                if (res.error || !res.data) {
+                    setPhraseError(res.error ?? "Failed to generate phrase");
+                    return;
+                }
+
+                const words = res.data.phrase.split(" ");
+                setPhraseWords(words);
+
+                const missing = MISSING_INDICES.map((i) => words[i]);
+                setBankWords([...missing].sort(() => Math.random() - 0.5));
+                setFilledSlots(Object.fromEntries(MISSING_INDICES.map((i) => [i, null])));
+            })
+            .finally(() => {
+                if (!cancelled) setLoadingPhrase(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const handleContinue = () => {
         if (step === 1 && isRevealed) {
             setStep(2);
         } else if (step === 2 && isStep2Complete) {
-            // Validate the words (optional logic here) then proceed
-            navigate("/create-account");
+            const allCorrect = MISSING_INDICES.every(
+                (index) => filledSlots[index] === phraseWords[index]
+            );
+
+            if (!allCorrect) {
+                console.warn("[SaveRecovery] Phrase confirmation failed — wrong words placed.");
+                alert("Some words are incorrect. Please check and try again.");
+                return;
+            }
+
+            const phrase = phraseWords.join(" ");
+            navigate("/create-account", { state: { phrase, action: "create" } });
         }
     };
 
@@ -66,28 +105,22 @@ export default function SaveRecoveryPhrase() {
 
         if (!word) return;
 
-        setFilledSlots(prev => {
+        setFilledSlots((prev) => {
             const newSlots = { ...prev };
             const existingWordInSlot = newSlots[targetIndex];
-
-            // 1. Place the new word in the drop target
             newSlots[targetIndex] = word;
 
-            // 2. Manage the Bank
-            setBankWords(prevBank => {
+            setBankWords((prevBank) => {
                 let newBank = [...prevBank];
-                // If it came from the bank, remove it
                 if (sourceIndex === null) {
-                    newBank = newBank.filter(w => w !== word);
+                    newBank = newBank.filter((w) => w !== word);
                 }
-                // If the slot we dropped into already had a word, send that old word back to the bank
                 if (existingWordInSlot) {
                     newBank.push(existingWordInSlot);
                 }
                 return newBank;
             });
 
-            // 3. If dragged from another slot, clear the source slot
             if (sourceIndex !== null && sourceIndex !== targetIndex) {
                 newSlots[sourceIndex] = null;
             }
@@ -96,22 +129,104 @@ export default function SaveRecoveryPhrase() {
         });
     };
 
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault(); // Required to allow a drop
+    const handleDragOver = (e: React.DragEvent) => e.preventDefault();
+
+    const handleRemoveFromSlot = (index: number, word: string) => {
+        setFilledSlots((prev) => ({ ...prev, [index]: null }));
+        setBankWords((prev) => [...prev, word]);
     };
 
-    // Allows users to tap a filled slot to remove the word back to the bank
-    const handleRemoveFromSlot = (index: number, word: string) => {
-        setFilledSlots(prev => ({ ...prev, [index]: null }));
-        setBankWords(prev => [...prev, word]);
+    // --- Import mode: validate and navigate with the user's phrase ---
+    const handleImportSubmit = () => {
+        const words = importInput.trim().split(/\s+/);
+
+        if (words.length !== 12) {
+            setImportError(`Expected 12 words, got ${words.length}`);
+            return;
+        }
+
+        const phrase = words.join(" ");
+        navigate("/create-account", { state: { phrase, action: "import" } });
     };
+
+    // --- Import mode render ---
+    if (isImport) {
+        return (
+            <div className="fixed inset-0 w-full h-dvh bg-[#050505] text-white flex flex-col px-6 py-12">
+                <div className="flex-1 flex flex-col mt-2 w-full max-w-md mx-auto">
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="w-10 h-10 rounded-full bg-[#18181A] flex items-center justify-center mb-6 hover:bg-[#262626] transition-colors"
+                    >
+                        <ArrowLeft className="w-5 h-5 text-white/70" />
+                    </button>
+
+                    <h1 className="text-3xl font-bold tracking-tight mb-4 leading-snug">
+                        Import your wallet
+                    </h1>
+                    <p className="text-[#A1A1AA] text-[15px] leading-relaxed mb-8">
+                        Enter your 12-word Secret Recovery Phrase separated by spaces.
+                    </p>
+
+                    <textarea
+                        value={importInput}
+                        onChange={(e) => {
+                            setImportInput(e.target.value);
+                            setImportError(null);
+                        }}
+                        placeholder="word1 word2 word3 ... word12"
+                        rows={4}
+                        className="w-full bg-[#141414] border border-[#262626] focus:border-[#8B5CF6] outline-none rounded-xl p-4 text-white text-sm placeholder:text-[#52525B] resize-none leading-relaxed transition-colors"
+                    />
+
+                    {importError && (
+                        <p className="text-red-400 text-xs mt-2">{importError}</p>
+                    )}
+
+                    <p className="text-[#52525B] text-xs mt-2">
+                        {importInput.trim() ? `${importInput.trim().split(/\s+/).length} / 12 words` : ""}
+                    </p>
+                </div>
+
+                <div className="mt-auto pb-6 w-full max-w-md mx-auto">
+                    <Button
+                        onClick={handleImportSubmit}
+                        disabled={importInput.trim().split(/\s+/).length !== 12}
+                        className="w-full h-14 rounded-xl font-semibold text-base transition-colors shadow-none bg-[#7C3AED] text-white hover:bg-[#6D28D9] disabled:opacity-50"
+                    >
+                        Continue
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    // --- Create mode: Loading / Error States ---
+    if (loadingPhrase) {
+        return (
+            <div className="fixed inset-0 bg-[#050505] text-white flex items-center justify-center">
+                <p className="text-[#A1A1AA] text-sm animate-pulse">Generating your seed phrase...</p>
+            </div>
+        );
+    }
+
+    if (phraseError) {
+        return (
+            <div className="fixed inset-0 bg-[#050505] text-white flex flex-col items-center justify-center gap-4 px-6">
+                <p className="text-red-400 text-sm text-center">{phraseError}</p>
+                <Button onClick={() => window.location.reload()} className="bg-[#8B5CF6] text-white">
+                    Retry
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 w-full h-dvh bg-[#050505] text-white flex flex-col px-6 py-12">
             <div className="flex-1 flex flex-col mt-2 w-full max-w-md mx-auto">
-                
+
                 {/* Back Button */}
-                <button 
+                <button
                     onClick={handleBack}
                     className="w-10 h-10 rounded-full bg-[#18181A] flex items-center justify-center mb-6 hover:bg-[#262626] transition-colors"
                 >
@@ -125,12 +240,12 @@ export default function SaveRecoveryPhrase() {
                         <>Confirm your Secret<br />Recovery Phrase</>
                     )}
                 </h1>
-                
+
                 <p className="text-[#A1A1AA] text-[15px] leading-relaxed mb-8">
                     {step === 1 ? (
                         <>
-                            This is your <span className="text-[#8B5CF6]">Secret Recovery Phrase</span>. Write 
-                            it down in the correct order and keep it safe. If someone has your Secret Recovery 
+                            This is your <span className="text-[#8B5CF6]">Secret Recovery Phrase</span>. Write
+                            it down in the correct order and keep it safe. If someone has your Secret Recovery
                             Phrase, they can access your wallet. Don't share it with anyone, ever.
                         </>
                     ) : (
@@ -140,12 +255,12 @@ export default function SaveRecoveryPhrase() {
 
                 {/* Phrase Container */}
                 <div className="w-full bg-[#141414] rounded-xl p-4 border border-[#262626] relative overflow-hidden">
-                    
+
                     {/* STEP 1: View Phrase Grid */}
                     {step === 1 && (
                         <>
-                            <div className={`grid grid-cols-3 gap-2 transition-all duration-300 ${!isRevealed ? 'blur-md select-none opacity-50' : 'blur-0 opacity-100'}`}>
-                                {ACTUAL_WORDS.map((word, index) => (
+                            <div className={`grid grid-cols-3 gap-2 transition-all duration-300 ${!isRevealed ? "blur-md select-none opacity-50" : "blur-0 opacity-100"}`}>
+                                {phraseWords.map((word, index) => (
                                     <div key={index} className="bg-black border border-[#262626] rounded-lg px-2 py-2.5 text-[13px] font-medium flex items-center">
                                         <span className="text-white/50 w-4 mr-1">{index + 1}.</span> {word}
                                     </div>
@@ -153,9 +268,11 @@ export default function SaveRecoveryPhrase() {
                             </div>
 
                             {!isRevealed && (
-                                <div 
+                                <div
                                     className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer z-10 bg-[A7A3A3]/30 backdrop-blur-[1px]"
-                                    onClick={() => setIsRevealed(true)}
+                                    onClick={() => {
+                                        setIsRevealed(true);
+                                    }}
                                 >
                                     <img src="/eye_lid.svg" alt="" />
                                     <span className="font-semibold text-sm mb-1 text-white">Tap to reveal</span>
@@ -168,14 +285,13 @@ export default function SaveRecoveryPhrase() {
                     {/* STEP 2: Confirm Phrase Grid */}
                     {step === 2 && (
                         <div className="grid grid-cols-3 gap-2">
-                            {ACTUAL_WORDS.map((_, index) => {
+                            {phraseWords.map((_, index) => {
                                 const isMissing = MISSING_INDICES.includes(index);
                                 const filledWord = filledSlots[index];
 
-                                // Missing & Fillable Slot
                                 if (isMissing) {
                                     return (
-                                        <div 
+                                        <div
                                             key={index}
                                             onDrop={(e) => handleDrop(e, index)}
                                             onDragOver={handleDragOver}
@@ -183,18 +299,17 @@ export default function SaveRecoveryPhrase() {
                                             draggable={!!filledWord}
                                             onDragStart={(e) => filledWord && handleDragStart(e, filledWord, index)}
                                             className={`rounded-lg px-2 py-2.5 text-[13px] font-medium flex items-center transition-colors
-                                                ${filledWord 
-                                                    ? "bg-[#18181A] border border-[#8B5CF6] text-white cursor-grab active:cursor-grabbing" 
+                                                ${filledWord
+                                                    ? "bg-[#18181A] border border-[#8B5CF6] text-white cursor-grab active:cursor-grabbing"
                                                     : "bg-transparent border border-dashed border-[#52525B] text-white"
                                                 }`}
                                         >
-                                            <span className="w-4 mr-1 text-white/50">{index + 1}.</span> 
+                                            <span className="w-4 mr-1 text-white/50">{index + 1}.</span>
                                             {filledWord || ""}
                                         </div>
                                     );
                                 }
 
-                                // Static Masked Slot
                                 return (
                                     <div key={index} className="bg-black border border-[#262626] rounded-lg px-2 py-2.5 text-[13px] font-medium flex items-center text-white/50">
                                         <span className="w-4 mr-1">{index + 1}.</span> ********
@@ -205,11 +320,11 @@ export default function SaveRecoveryPhrase() {
                     )}
                 </div>
 
-                {/* STEP 2: Word Selection Bank (Draggable Items) */}
+                {/* STEP 2: Word Bank */}
                 {step === 2 && (
                     <div className="grid grid-cols-3 gap-2 mt-8 min-h-[50px]">
                         {bankWords.map((word, index) => (
-                            <div 
+                            <div
                                 key={`bank-${index}`}
                                 draggable
                                 onDragStart={(e) => handleDragStart(e, word)}
@@ -227,20 +342,19 @@ export default function SaveRecoveryPhrase() {
                 <Button
                     onClick={handleContinue}
                     disabled={(step === 1 && !isRevealed) || (step === 2 && !isStep2Complete)}
-                    className={`w-full h-14 rounded-xl font-semibold text-base transition-colors shadow-none 
+                    className={`w-full h-14 rounded-xl font-semibold text-base transition-colors shadow-none
                         ${(step === 1 && !isRevealed) || (step === 2 && !isStep2Complete)
-                            ? "bg-[#C4B5FD] text-black hover:bg-[#C4B5FD] opacity-70" 
+                            ? "bg-[#C4B5FD] text-black hover:bg-[#C4B5FD] opacity-70"
                             : "bg-[#7C3AED] text-white hover:bg-[#6D28D9]"
                         }`}
                 >
                     Continue
                 </Button>
-                
+
                 <button className="text-[#6366F1] font-medium text-sm hover:text-[#4F46E5] transition-colors">
                     Remind me later
                 </button>
             </div>
-            
         </div>
     );
 }

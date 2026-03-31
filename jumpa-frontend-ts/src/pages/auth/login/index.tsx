@@ -1,194 +1,121 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { X, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import { login, getMe } from "@/lib/api";
+import { getStoredWallet, saveWalletLocally } from "@/lib/wallet-store";
 
-// --- ZOD SCHEMA ---
-const formSchema = z.object({
-    pin: z.string().length(4, "PIN must be exactly 4 digits"),
-});
-
+/**
+ * Login screen — password-based unlock.
+ * - If an active session already exists → skip to /home
+ * - Otherwise: reads address from localStorage, verifies password to login
+ */
 export default function LoginForm() {
     const navigate = useNavigate();
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [hasError, setHasError] = useState(false);
+    const [checkingSession, setCheckingSession] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: { pin: "" },
-    });
+    const storedWallet = getStoredWallet();
 
-    const currentPin = form.watch("pin");
-
-    // --- DUMMY API CALL ---
-    const executeLogin = async (pinCode: string) => {
-        setLoading(true);
-        setHasError(false);
-
-        // Simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Dummy authentication logic (assume '1234' is the correct pin)
-        if (pinCode === "1234") {
-            console.log("Login successful!");
-            navigate("/home"); // Navigate to next screen
-        } else {
-            console.error("Login failed: Incorrect PIN");
-            setHasError(true);
+    // Check for existing session on mount — redirect to /home if already logged in
+    useEffect(() => {
+        if (!storedWallet) {
+            setCheckingSession(false);
+            navigate("/onboarding", { replace: true });
+            return;
         }
-        
-        setLoading(false);
-    };
-
-    // --- KEYPAD LOGIC ---
-    const handleKeyPress = (key: string) => {
-        if (loading) return;
-
-        let newPin = currentPin;
-
-        // If the user types after an error, clear the board first
-        if (hasError) {
-            newPin = "";
-            setHasError(false);
-        }
-
-        if (newPin.length < 4) {
-            newPin += key;
-            form.setValue("pin", newPin, { shouldValidate: true });
-
-            // Auto-submit when 4 digits are reached
-            if (newPin.length === 4) {
-                executeLogin(newPin);
+        getMe().then((res) => {
+            if (res.data) {
+                navigate("/home", { replace: true });
+            } else {
+                setCheckingSession(false);
             }
-        }
-    };
+        });
+    }, []);
 
-    const handleDelete = () => {
-        if (loading) return;
-        
-        if (hasError) {
-            form.setValue("pin", "");
-            setHasError(false);
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!password || loading || !storedWallet) return;
+
+        setError(null);
+        setLoading(true);
+
+        const res = await login(storedWallet.address, password);
+
+        if (res.error || !res.data) {
+            setError(res.error ?? "Login failed. Check your password and try again.");
+            setLoading(false);
             return;
         }
 
-        if (currentPin.length > 0) {
-            form.setValue("pin", currentPin.slice(0, -1), { shouldValidate: true });
-        }
+        saveWalletLocally({
+            address: res.data.address,
+            addresses: res.data.addresses,
+        });
+
+        setLoading(false);
+        navigate("/home", { replace: true });
     };
 
-    return (
-        // Changed to min-h-dvh and added overflow-y-auto to allow scrolling on small devices
-        <div className="min-h-dvh w-full bg-black text-white flex flex-col items-center justify-between py-8 overflow-y-auto">
-            
-            {/* --- HEADER --- */}
-            <div className="flex flex-col items-center mt-8 sm:mt-12 w-full px-6 text-center">
-                <h1 className="text-3xl font-bold mb-3">Welcome back!</h1>
-                {hasError ? (
-                    <p className="text-[#A1A1AA] text-[15px]">Confirm your 4 - digit passcode.</p>
-                ) : (
-                    <p className="text-[#A1A1AA] text-[15px]">Enter your 4 - digit passcode.</p>
-                )}
-
-                {/* --- PIN INDICATORS --- */}
-                <div className="flex flex-col items-center mt-8 sm:mt-12 mb-4 h-16">
-                    <div className="flex gap-4">
-                        {[0, 1, 2, 3].map((index) => {
-                            const isFilled = index < currentPin.length;
-                            
-                            // Determine dot color based on state
-                            let dotClass = "bg-[#262626]"; // Empty state
-                            if (isFilled) {
-                                if (hasError) dotClass = "bg-red-500";
-                                else dotClass = "bg-[#8B5CF6]"; // The purple color
-                            }
-
-                            return (
-                                <div
-                                    key={index}
-                                    className={`w-4 h-4 rounded-full transition-colors duration-200 ${
-                                        loading && isFilled && !hasError ? "animate-pulse" : ""
-                                    } ${dotClass}`}
-                                />
-                            );
-                        })}
-                    </div>
-                    
-                    {/* Error Message Space */}
-                    <div className="h-6 mt-4">
-                        {hasError && (
-                            <span className="text-red-500 text-sm font-medium">Wrong passcode.</span>
-                        )}
-                    </div>
-                </div>
+    if (checkingSession) {
+        return (
+            <div className="min-h-dvh w-full bg-black flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
             </div>
+        );
+    }
 
-            {/* --- CUSTOM KEYPAD --- */}
-            <div className="w-full max-w-xs mx-auto my-6 sm:my-8 flex-1 flex flex-col justify-center">
-                <div className="grid grid-cols-3 gap-x-6 gap-y-4 sm:gap-y-6 justify-items-center">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                        <KeypadButton 
-                            key={num} 
-                            onClick={() => handleKeyPress(num.toString())}
-                            disabled={loading}
-                        >
-                            {num}
-                        </KeypadButton>
-                    ))}
-                    
-                    {/* Empty spot bottom left */}
-                    <div /> 
+    if (!storedWallet) return null;
 
-                    <KeypadButton onClick={() => handleKeyPress("0")} disabled={loading}>
-                        0
-                    </KeypadButton>
-                    
-                    {/* Backspace bottom right */}
+    const displayAddress = `${storedWallet.address.slice(0, 10)}...${storedWallet.address.slice(-6)}`;
+
+    return (
+        <div className="min-h-dvh w-full bg-black text-white flex flex-col items-center justify-center px-6">
+            <div className="w-full max-w-sm flex flex-col gap-6">
+
+                <div className="text-center mb-2">
+                    <h1 className="text-3xl font-bold mb-2">Welcome back!</h1>
+                    <p className="text-[#A1A1AA] text-sm">Enter your password to unlock your wallet.</p>
+                    <p className="text-[#52525B] text-xs mt-2 font-mono">{displayAddress}</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <div className="relative">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => { setPassword(e.target.value); setError(null); }}
+                            autoFocus
+                            className="w-full h-14 bg-[#1C1C1E] border border-[#333333] rounded-xl px-4 pr-12 text-white placeholder:text-[#52525B] focus:outline-none focus:border-[#8B5CF6] text-sm"
+                        />
+                        <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A1A1AA]">
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                    </div>
+
+                    {error && <p className="text-red-400 text-xs -mt-2">{error}</p>}
+
                     <button
-                        type="button"
-                        onClick={handleDelete}
-                        disabled={loading || currentPin.length === 0}
-                        // Added responsive sizing to match the keypad buttons
-                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-white active:bg-[#333333] transition-colors disabled:opacity-50"
+                        type="submit"
+                        disabled={!password || loading}
+                        className="w-full h-14 rounded-xl bg-[#7C3AED] hover:bg-[#6D28D9] disabled:opacity-50 text-white font-semibold text-base transition-colors"
                     >
-                        <X className="w-6 h-6 sm:w-7 sm:h-7" />
+                        {loading ? "Verifying..." : "Unlock Wallet"}
+                    </button>
+                </form>
+
+                <div className="text-center">
+                    <button
+                        onClick={() => { navigate("/forgot-password-email"); }}
+                        className="text-[#A1A1AA] text-sm hover:text-white transition-colors"
+                    >
+                        Forgot password?
                     </button>
                 </div>
             </div>
-
-            {/* --- FOOTER LINK --- */}
-            <div className="pb-4 sm:pb-6 mt-auto">
-                <Link 
-                    to="/forgot-password-email" 
-                    className="text-[#A1A1AA] text-sm flex items-center gap-1 hover:text-white transition-colors"
-                >
-                    Forgot Password <ChevronRight className="w-4 h-4" />
-                </Link>
-            </div>
-
         </div>
-    );
-}
-
-// --- SUB-COMPONENT: Keypad Button ---
-interface KeypadButtonProps {
-    children: React.ReactNode;
-    onClick: () => void;
-    disabled?: boolean;
-}
-
-function KeypadButton({ children, onClick, disabled }: KeypadButtonProps) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            disabled={disabled}
-            // Made buttons slightly smaller on mobile (w-16 h-16) and larger on bigger screens (sm:w-20 sm:h-20)
-            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#1C1C1E] text-white text-2xl sm:text-3xl flex items-center justify-center active:bg-[#333333] transition-colors disabled:opacity-50"
-        >
-            {children}
-        </button>
     );
 }

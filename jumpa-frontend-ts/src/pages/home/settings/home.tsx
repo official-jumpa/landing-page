@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/api";
+import { clearWalletLocally } from "@/lib/wallet-store";
 import { 
   User, 
   Lock, 
@@ -8,11 +11,21 @@ import {
   MessageCircle, 
   X, 
   Info, 
-  ChevronRight, 
+  ChevronRight,
+  LogOut,
 } from "lucide-react";
 
 export default function SettingsHome() {
     const navigate = useNavigate();
+    const [signingOut, setSigningOut] = useState(false);
+
+    const handleSignOut = async () => {
+        if (signingOut) return;
+        setSigningOut(true);
+        await logout();
+        clearWalletLocally();
+        navigate("/onboarding", { replace: true });
+    };
 
     // Helper component for individual menu items
     const MenuItem = ({ icon: Icon, label, onClick }: any) => (
@@ -117,9 +130,12 @@ export default function SettingsHome() {
             {/* --- Footer Button --- */}
             <div className="absolute bottom-15 left-0 right-0 p-6 bg-white/80 backdrop-blur-sm">
                 <Button
-                    className="w-full py-6 rounded-xl bg-[#01C259] hover:bg-[#01b050] text-white text-lg font-light shadow-md transition-all active:scale-[0.98]"
+                    onClick={handleSignOut}
+                    disabled={signingOut}
+                    className="w-full py-6 rounded-xl bg-[#01C259] hover:bg-[#01b050] disabled:opacity-60 text-white text-lg font-light shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 >
-                    Sign Out
+                    <LogOut className="w-5 h-5" />
+                    {signingOut ? "Signing out..." : "Sign Out"}
                 </Button>
             </div>
 

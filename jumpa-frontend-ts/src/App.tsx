@@ -14,6 +14,7 @@ import Notifications from "./pages/home/create-account/notifications";
 import SendMoneyFlow from "./pages/send";
 
 import HomeLayout from "./layouts/HomeLayout";
+import ProtectedRoute from "./lib/ProtectedRoute";
 
 function App() {
   return (
@@ -37,8 +38,9 @@ function App() {
           <Route path="/send" element={<SendMoneyFlow />} />
           <Route path="/" element={<Landing />} />
 
-          {/* Driver - Wrapped in Isolated HomeLayout */}
-          <Route path="/home" element={<HomeLayout />}>
+          {/* Protected home routes — require a wallet in localStorage */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<HomeLayout />}>
             <Route index element={<JumpaDashboard />} />
             <Route path="3rikeAi" element={<AiDashboard />} />
             <Route path="airtime" element={<AirtimeFlow />} />
@@ -93,9 +95,8 @@ function App() {
             </Route>
 
             <Route path="*" element={<NoMatch />} />
-          </Route>
-
-
+            </Route>
+          </Route>{/* /ProtectedRoute */}
 
           {/* Using path="*"" means "match anything", so this route
           acts like a catch-all for URLs that we don't have explicit

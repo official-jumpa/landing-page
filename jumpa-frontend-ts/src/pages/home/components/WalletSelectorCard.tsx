@@ -1,31 +1,46 @@
 import React, { useState } from 'react';
-import { mainWallet } from '../../../data/wallets';
-import walletOrb from '../../../assets/images/illustrations/wallet-orb.png';
 import chevronDown from '../../../assets/icons/actions/chevron-down.svg';
 import copyIcon from '../../../assets/icons/actions/copy.svg';
+
+import { useHomeLayout } from '../../../layouts/HomeLayout';
 
 interface WalletSelectorCardProps {
   onDropdown: () => void;
 }
 
 const WalletSelectorCard: React.FC<WalletSelectorCardProps> = ({ onDropdown }) => {
+  const { balances, selectedSymbol } = useHomeLayout();
   const [copied, setCopied] = useState(false);
+
+  const activeToken = balances?.tokens?.find(t => t.symbol === selectedSymbol) || {
+    symbol: selectedSymbol,
+    name: selectedSymbol === 'ETH' ? 'Ethereum' : 'Flow (EVM)',
+    address: 'Fetching...'
+  };
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(mainWallet.address);
+    if (activeToken.address === 'Fetching...') return;
+    navigator.clipboard.writeText(activeToken.address);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
+  const truncatedAddress = activeToken.address.length > 15 
+    ? `${activeToken.address.slice(0, 6)}...${activeToken.address.slice(-4)}`
+    : activeToken.address;
+
   return (
     <div className="wallet-selector">
       <div className="wallet-selector-left">
-        <img src={walletOrb} alt="" className="wallet-orb" />
+        <div 
+          className="wallet-orb" 
+          style={{ backgroundColor: selectedSymbol === 'ETH' ? '#627EEA' : '#00EF8B' }} 
+        />
         <div className="wallet-info">
-          <span className="wallet-name">{mainWallet.name}</span>
+          <span className="wallet-name">{activeToken.name} Wallet</span>
           <div className="wallet-address-row">
-            <span className="wallet-address">{mainWallet.address}</span>
+            <span className="wallet-address">{truncatedAddress}</span>
             <button className="wallet-copy-btn" onClick={handleCopy} aria-label="Copy address" type="button">
               <img src={copyIcon} alt="Copy" width="14" height="14" />
             </button>

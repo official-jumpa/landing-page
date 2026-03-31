@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
 import './Modals.css';
-import { wallets, type Wallet } from '../../data/wallets';
+import { useHomeLayout } from '../../layouts/HomeLayout';
 import closeIcon from '../../assets/icons/actions/close.svg';
 import copyIcon from '../../assets/icons/actions/copy.svg';
-import walletOrb from '../../assets/images/illustrations/wallet-orb.png';
 import addIcon from '../../assets/icons/actions/add.svg';
-import deleteIcon from '../../assets/icons/actions/delete.svg';
 
 interface WalletListModalProps {
-  onSelect: (wallet: Wallet) => void;
   onClose: () => void;
 }
 
-const WalletListModal: React.FC<WalletListModalProps> = ({ onSelect, onClose }) => {
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+const WalletListModal: React.FC<WalletListModalProps> = ({ onClose }) => {
+  const { balances, onSelectAsset, selectedSymbol } = useHomeLayout();
+  const [copiedSymbol, setCopiedSymbol] = useState<string | null>(null);
 
-  const handleCopy = (e: React.MouseEvent, wallet: Wallet) => {
+  const handleCopy = (e: React.MouseEvent, address: string, symbol: string) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(wallet.fullAddress);
-    setCopiedId(wallet.id);
-    setTimeout(() => setCopiedId(null), 1500);
+    navigator.clipboard.writeText(address);
+    setCopiedSymbol(symbol);
+    setTimeout(() => setCopiedSymbol(null), 1500);
   };
+
+  const tokens = balances?.tokens || [
+      { symbol: 'FLOW', name: 'Flow (EVM)', balance: '0.00', address: 'Loading...' },
+      { symbol: 'ETH', name: 'Ethereum', balance: '0.00', address: 'Loading...' },
+      { symbol: 'USDC', name: 'USD Coin', balance: '0.00', address: 'Loading...' },
+  ];
 
   return (
     <div className="modal-sheet modal-wallet-list" onClick={(e) => e.stopPropagation()}>
@@ -33,39 +37,50 @@ const WalletListModal: React.FC<WalletListModalProps> = ({ onSelect, onClose }) 
           <img src={addIcon} alt="" width="11.72" height="11.72" />
         </button>
       </div>
-      <p className="modal-subtitle">You can "Add" and "Edit" wallets</p>
+      <p className="modal-subtitle">Select a wallet to view its balance</p>
 
       <div className="wallet-list">
-        {wallets.map((wallet) => {
-          const balanceStr = wallet.balance;
+        {tokens.map((token) => {
+          const balanceStr = token.balance;
           const decimalIndex = balanceStr.lastIndexOf('.');
           const hasDecimal = decimalIndex !== -1;
           const wholePart = hasDecimal ? balanceStr.substring(0, decimalIndex) : balanceStr;
-          const decimalPart = hasDecimal ? balanceStr.substring(decimalIndex) : '';
+          const decimalPart = hasDecimal ? balanceStr.substring(decimalIndex, decimalIndex + 5) : '';
+          const isActive = selectedSymbol === token.symbol;
 
           return (
             <button
-              key={wallet.id}
-              className="wallet-row"
-              onClick={() => onSelect(wallet)}
+              key={token.symbol}
+              className={`wallet-row ${isActive ? 'active' : ''}`}
+              onClick={() => {
+                onSelectAsset(token.symbol);
+                onClose();
+              }}
               type="button"
             >
               <div className="wallet-row-left">
-                <img src={deleteIcon} alt="Delete" className="wallet-delete-icon" />
-                <img src={walletOrb} alt="" className="wallet-row-orb" />
+                <div 
+                    className="wallet-row-orb" 
+                    style={{ 
+                      backgroundColor: 
+                        token.symbol === 'ETH' ? '#627EEA' : 
+                        token.symbol === 'FLOW' ? '#00EF8B' : 
+                        '#2775CA' // USDC Blue
+                    }}
+                />
                 <div className="wallet-row-info">
-                  <span className="wallet-row-name">{wallet.name}</span>
+                  <span className="wallet-row-name">{token.name} ({token.symbol})</span>
                   <div className="wallet-row-addr">
-                    <span>{wallet.address}</span>
+                    <span>{token.address.slice(0, 6)}...{token.address.slice(-4)}</span>
                     <button
                       className="wallet-row-copy"
-                      onClick={(e) => handleCopy(e, wallet)}
+                      onClick={(e) => handleCopy(e, token.address, token.symbol)}
                       aria-label="Copy address"
                       type="button"
                     >
                       <img src={copyIcon} alt="Copy" width="12" height="12" />
                     </button>
-                    {copiedId === wallet.id && <span className="copied-toast">Copied!</span>}
+                    {copiedSymbol === token.symbol && <span className="copied-toast">Copied!</span>}
                   </div>
                 </div>
               </div>

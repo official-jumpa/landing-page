@@ -13,6 +13,7 @@ export type Token = {
   symbol: string;
   name: string;
   balanceText: string;
+  balanceRaw: number;
   iconLabel: string;
   iconColor: string;
   chainBadge?: {

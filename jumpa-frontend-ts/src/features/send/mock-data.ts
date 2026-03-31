@@ -38,63 +38,49 @@ export const mockRecipients: Recipient[] = [
 ];
 
 export const defaultRecipient: Recipient = {
-  id: "916945687",
-  name: "Anon",
-  address: "0xB7...BYz9",
-  bank: "Opay",
+  id: "",
+  name: "",
+  address: "",
+  bank: "",
 };
 
 export const mockTokens: Token[] = [
   {
-    id: "sol",
-    symbol: "Solana",
-    name: "Solana",
-    balanceText: "0.0192 SOL",
-    iconLabel: "S",
-    iconColor: "bg-black text-cyan-300",
-  },
-  {
-    id: "usdc-eth",
-    symbol: "USDC",
-    name: "USD Coin",
-    balanceText: "0.0192 USDC",
-    iconLabel: "U",
-    iconColor: "bg-blue-600 text-white",
-    chainBadge: { label: "E", color: "bg-slate-100", textColor: "text-slate-700" },
-  },
-  {
-    id: "usdt-sol",
-    symbol: "USDT",
-    name: "Tether",
-    balanceText: "0.0192 USDT",
-    iconLabel: "T",
-    iconColor: "bg-emerald-500 text-white",
-    chainBadge: { label: "S", color: "bg-slate-100", textColor: "text-slate-700" },
+    id: "flow",
+    symbol: "FLOW",
+    name: "Flow (EVM)",
+    balanceText: "0.00 Flow",
+    balanceRaw: 0,
+    iconLabel: "F",
+    iconColor: "bg-green-500 text-white",
   },
   {
     id: "eth",
     symbol: "ETH",
     name: "Ethereum",
-    balanceText: "0.0192 Eth",
+    balanceText: "0.00 Eth",
+    balanceRaw: 0,
     iconLabel: "E",
     iconColor: "bg-indigo-500 text-white",
   },
   {
-    id: "usdc-celo",
+    id: "usdc",
     symbol: "USDC",
     name: "USD Coin",
     balanceText: "0.00 USDC",
+    balanceRaw: 0,
     iconLabel: "U",
     iconColor: "bg-blue-600 text-white",
-    chainBadge: { label: "C", color: "bg-yellow-300", textColor: "text-black" },
+  },
+  {
+    id: "usdt",
+    symbol: "USDT",
+    name: "Tether",
+    balanceText: "0.00 USDT",
+    balanceRaw: 0,
+    iconLabel: "T",
+    iconColor: "bg-emerald-500 text-white",
   },
 ];
 
-export const defaultToken: Token = {
-  id: "naira",
-  symbol: "Naira",
-  name: "Naira",
-  balanceText: "81.07",
-  iconLabel: "N",
-  iconColor: "bg-violet-600 text-white",
-};
+export const defaultToken: Token = mockTokens[0];

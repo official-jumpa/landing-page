@@ -15,6 +15,8 @@ import PrivateKeyScreen from '../components/wallet/PrivateKeyScreen';
 import WithdrawOptions from '../pages/home/withdraw/options';
 import TradePage from '../pages/home/subpages/TradePage';
 import DAppPage from '../pages/home/subpages/DAppPage';
+import type { BalancesResponse } from '../lib/api';
+import { getBalances } from '../lib/api';
 
 // Data
 import { type Wallet } from '../data/wallets';
@@ -29,6 +31,10 @@ interface HomeLayoutContextType {
   onTrade: () => void;
   onDApp: () => void;
   onReceive: () => void;
+  balances: BalancesResponse | null;
+  selectedSymbol: string;
+  onSelectAsset: (symbol: string) => void;
+  refreshBalances: () => void;
 }
 
 const HomeLayoutContext = createContext<HomeLayoutContextType | undefined>(undefined);
@@ -58,6 +64,21 @@ const HomeLayout: React.FC = () => {
 
   // Home State
   const [balanceHidden, setBalanceHidden] = useState(false);
+  const [balances, setBalances] = useState<BalancesResponse | null>(null);
+  const [selectedSymbol, setSelectedSymbol] = useState<string>("ETH");
+
+  const fetchBalances = useCallback(async () => {
+    const res = await getBalances();
+    if (res.data) {
+      setBalances(res.data);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBalances();
+    const interval = setInterval(fetchBalances, 90000); // 90s poll
+    return () => clearInterval(interval);
+  }, [fetchBalances]);
 
   // Modals
   const [walletListOpen, setWalletListOpen] = useState(false);
@@ -81,11 +102,6 @@ const HomeLayout: React.FC = () => {
     if (pageId === "home") navigate("/home");
   }, [navigate]);
 
-  const handleWalletSelect = useCallback((wallet: Wallet) => {
-    setSelectedWallet(wallet);
-    setWalletListOpen(false);
-  }, []);
-
   const handlePrivateKeyRequest = useCallback((wallet: Wallet) => {
     setPinWallet(wallet);
     setSelectedWallet(null);
@@ -106,8 +122,12 @@ const HomeLayout: React.FC = () => {
     onVirtualAccount: () => setVirtualAccountOpen(true),
     onWithdrawal: () => setWithdrawOpen(true),
     onTrade: () => { setCurrentPage("trade"); navigate("/home"); },
-    onDApp: () => { setCurrentPage("dapp"); navigate("/home"); },
+    onDApp: () => { setCurrentPage("trade"); navigate("/home"); },
     onReceive: () => setDepositSheetOpen(true),
+    balances,
+    selectedSymbol,
+    onSelectAsset: (symbol: string) => setSelectedSymbol(symbol),
+    refreshBalances: fetchBalances,
   };
 
   return (
@@ -173,7 +193,6 @@ const HomeLayout: React.FC = () => {
 
           {walletListOpen && (
             <WalletListModal
-              onSelect={handleWalletSelect}
               onClose={() => setWalletListOpen(false)}
             />
           )}
@@ -193,7 +212,11 @@ const HomeLayout: React.FC = () => {
           )}
 
           {depositSheetOpen && (
-            <DepositMethodSheet onClose={() => setDepositSheetOpen(false)} />
+            <DepositMethodSheet 
+              onClose={() => setDepositSheetOpen(false)} 
+              address={balances?.address || ""}
+              selectedSymbol={selectedSymbol}
+            />
           )}
         </div>
       </div>

@@ -6,6 +6,9 @@ type SuccessSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDone: () => void;
+  amount: string;
+  tokenSymbol: string;
+  hash: string;
 };
 
 const confettiColors = [
@@ -17,7 +20,14 @@ const confettiColors = [
   "bg-pink-500",
 ];
 
-export default function SuccessSheet({ open, onOpenChange, onDone }: SuccessSheetProps) {
+export default function SuccessSheet({ 
+  open, 
+  onOpenChange, 
+  onDone,
+  amount,
+  tokenSymbol,
+  hash
+}: SuccessSheetProps) {
   return (
     <SheetShell open={open} onOpenChange={onOpenChange} title="" className="overflow-hidden">
       <div className="relative space-y-5 pb-2 pt-8">
@@ -35,30 +45,27 @@ export default function SuccessSheet({ open, onOpenChange, onDone }: SuccessShee
         </div>
         <div className="text-center">
           <h3 className="text-2xl font-semibold text-white">Transaction Successful</h3>
-          <p className="mt-2 text-lg text-zinc-300">You&apos;ve sent N1.00 to 91679078</p>
+          <p className="mt-2 text-lg text-zinc-300">You&apos;ve sent {amount} {tokenSymbol}</p>
         </div>
 
         <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between border-b border-dotted border-zinc-600 pb-3 text-zinc-100">
             <span className="text-lg">Amount</span>
-            <span className="text-xl">$1.00</span>
+            <span className="text-xl">{amount} {tokenSymbol}</span>
           </div>
-          <div className="flex items-center justify-between border-b border-dotted border-zinc-600 pb-3 text-zinc-100">
-            <span className="text-lg">Bank</span>
-            <span className="text-xl">Opay</span>
-          </div>
-          <div className="flex items-center justify-between border-b border-dotted border-zinc-600 pb-3 text-zinc-100">
-            <span className="text-lg">Date</span>
-            <span className="text-xl">20-2-2026</span>
+          <div className="flex flex-col border-b border-dotted border-zinc-600 pb-3 text-zinc-100">
+            <span className="text-lg">Transaction Hash</span>
+            <span className="text-sm break-all text-zinc-400">{hash}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 pt-3">
           <Button
             type="button"
+            onClick={() => window.open(tokenSymbol === 'FLOW' ? `https://evm-testnet.flowscan.io/tx/${hash}` : `https://sepolia.etherscan.io/tx/${hash}`, '_blank')}
             className="h-14 rounded-xl bg-violet-500 text-xl text-white hover:bg-violet-400"
           >
-            Receipt
+            Explorer
           </Button>
           <Button
             type="button"

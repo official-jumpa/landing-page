@@ -1,6 +1,4 @@
 import React from 'react';
-import { mainWallet } from '../../../data/wallets';
-import coinsIcon from '../../../assets/icons/coins/coins.svg';
 import balanceEyeOpen from '../../../assets/icons/actions/eye (2).svg';
 import balanceEyeClosed from '../../../assets/icons/actions/eye (1).svg';
 import balanceCloseSvg from '../../../assets/icons/actions/balance-close.svg';
@@ -8,26 +6,45 @@ import graphUp from '../../../assets/icons/actions/graph-up.svg';
 import graphDown from '../../../assets/icons/actions/graph-down.svg';
 import dropdownChevron from '../../../assets/icons/actions/dropdown-chevron.svg';
 
+import { useHomeLayout } from '../../../layouts/HomeLayout';
+
 interface WalletBalanceCardProps {
   hidden: boolean;
   onToggle: () => void;
 }
 
 const WalletBalanceCard: React.FC<WalletBalanceCardProps> = ({ hidden, onToggle }) => {
-  const isUp = mainWallet.changeDirection === 'up';
+  const { balances, selectedSymbol, onWalletDropdown } = useHomeLayout();
+  const isUp = true;
 
-  const balanceStr = mainWallet.balance;
+  const activeToken = balances?.tokens?.find(t => t.symbol === selectedSymbol) || {
+    symbol: selectedSymbol,
+    name: selectedSymbol === 'ETH' ? 'Ethereum' : 'Flow (EVM)',
+    balance: '0.00',
+    address: ''
+  };
+
+  const balanceStr = activeToken.balance.startsWith('$') ? activeToken.balance : `$${activeToken.balance}`;
+  const tokenLabel = activeToken.name;
+
   const decimalIndex = balanceStr.lastIndexOf('.');
   const hasDecimal = decimalIndex !== -1;
   const wholePart = hasDecimal ? balanceStr.substring(0, decimalIndex) : balanceStr;
-  const decimalPart = hasDecimal ? balanceStr.substring(decimalIndex) : '';
+  const rawDecimalPart = hasDecimal ? balanceStr.substring(decimalIndex) : '';
+  const decimalPart = rawDecimalPart.length > 5 ? rawDecimalPart.substring(0, 5) : rawDecimalPart;
 
   return (
     <div className="balance-card">
       <div className="balance-token-row">
-        <img src={coinsIcon} alt="" className="token-icons" />
-        <span className="token-label">
-          {mainWallet.token}
+        <div 
+          className="balance-token-orb" 
+          style={{ 
+            width: 24, height: 24, borderRadius: '50%',
+            backgroundColor: selectedSymbol === 'ETH' ? '#627EEA' : '#00EF8B' 
+          }} 
+        />
+        <span className="token-label" onClick={onWalletDropdown} style={{ cursor: 'pointer' }}>
+          {tokenLabel}
           <img src={dropdownChevron} alt="" width="10" height="10" className="token-chevron" />
         </span>
       </div>
@@ -47,7 +64,7 @@ const WalletBalanceCard: React.FC<WalletBalanceCardProps> = ({ hidden, onToggle 
       </div>
       <div className={`balance-change ${isUp ? 'up' : 'down'}`}>
         <img src={isUp ? graphUp : graphDown} alt="" width="18" height="18" />
-        <span>{hidden ? '••••' : mainWallet.change}</span>
+        <span>{hidden ? '••••' : '+0.00%'}</span>
       </div>
     </div>
   );

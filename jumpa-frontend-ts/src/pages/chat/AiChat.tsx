@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect, useCallback, type RefObject, type ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAiHistory, postAiIntent, postTransfer, postSwap } from "../../lib/api";
+import TransactionConfirmDrawer, { type TransactionDetails } from "../../features/send/components/TransactionConfirmDrawer";
 import "../../layouts/HomeLayout.css";
 import "./AiChat.css";
 
@@ -37,7 +40,35 @@ interface Message {
     sent: string;
     to: string;
     result: string;
+    isScheduled?: boolean;
   };
+  transactionParams?: any;
+}
+
+function TextWithLinks({ text }: { text: string }) {
+  // Robust regex for markdown links including multiline and long hashes
+  const parts = text.split(/(\[[\s\S]*?\]\(https?:\/\/\S+?\))/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        const match = part.match(/\[([\s\S]*?)\]\((https?:\/\/\S+?)\)/);
+        if (match) {
+          return (
+            <a
+              key={i}
+              href={match[2]}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white underline font-bold hover:text-white/80 transition-colors break-all"
+            >
+              {match[1]}
+            </a>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </>
+  );
 }
 
 const SUGGESTIONS = [
@@ -121,13 +152,21 @@ function WelcomeOverlay({ onClose }: { onClose: () => void }) {
   );
 }
 
-function ChatHomePanel({ onPromptClick }: { onPromptClick: (p: string) => void }) {
+function ChatHomePanel({ onPromptClick, onBack }: { onPromptClick: (p: string) => void; onBack: () => void }) {
   return (
     <div className="chat-home-panel-inner">
       <header className="chat-home-header">
-        <div className="chat-home-title-block">
-          <p className="chat-home-title-line">HI Anita</p>
-          <p className="chat-home-title-line">Start your transactions..</p>
+        <div className="flex justify-between items-start mb-4">
+          <div className="chat-home-title-block">
+            <p className="chat-home-title-line">HI dear</p>
+            <p className="chat-home-title-line">Start your transactions..</p>
+          </div>
+          <button
+            onClick={onBack}
+            className="text-white/50 text-xs hover:text-white transition-colors"
+          >
+            ← Back to Home
+          </button>
         </div>
         <p className="chat-home-subtitle">Prompt our Ai to make any transaction .</p>
       </header>
@@ -316,18 +355,33 @@ function ChatScreen({
   messages,
   showTyping,
   composer,
+  onBack,
+  onTransactionClick,
 }: {
   messages: Message[];
   showTyping: boolean;
   composer: ReactNode;
+  onBack: () => void;
+  onTransactionClick: (msg: Message) => void;
 }) {
   const endRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    const timer = setTimeout(() => {
+      endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+    return () => clearTimeout(timer);
   }, [messages, showTyping]);
 
   return (
     <div className="ai-chat-chat-screen">
+      <div className="px-5 pt-4 flex justify-end">
+        <button
+          onClick={onBack}
+          className="text-white/40 text-[10px] uppercase tracking-wider hover:text-white transition-colors"
+        >
+          Close Chat
+        </button>
+      </div>
       <div className="ai-chat-messages">
         {messages.map((m) => (
           <div key={m.id} style={{ marginBottom: 18 }}>
@@ -359,7 +413,10 @@ function ChatScreen({
               <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "flex-end", gap: 8 }}>
                 <img src={botAvatarImg} alt="" className="chat-msg-avatar chat-msg-avatar--bot" />
                 {m.isTransaction ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <button
+                    onClick={() => onTransactionClick(m)}
+                    className="flex flex-col gap-2 text-left w-full max-w-[260px] active:scale-95 transition-transform"
+                  >
                     <div
                       style={{
                         background: "#FF4F9A",
@@ -380,8 +437,11 @@ function ChatScreen({
                         padding: "12px 16px",
                         borderRadius: "4px 18px 18px 18px",
                         fontSize: 13,
-                        maxWidth: 260,
+                        width: "100%",
                         lineHeight: 1.7,
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        overflowWrap: "anywhere",
+                        wordBreak: "break-word",
                       }}
                     >
                       <div style={{ fontWeight: 700 }}>Withdrawal initiated!</div>
@@ -389,7 +449,7 @@ function ChatScreen({
                       <div>{m.transactionDetails?.to}</div>
                       <div style={{ color: "#3EC6C6", fontWeight: 600 }}>{m.transactionDetails?.result}</div>
                     </div>
-                  </div>
+                  </button>
                 ) : (
                   <div
                     style={{
@@ -398,12 +458,15 @@ function ChatScreen({
                       padding: "12px 16px",
                       borderRadius: "4px 18px 18px 18px",
                       fontSize: 13,
-                      maxWidth: 260,
+                      maxWidth: 280,
                       lineHeight: 1.6,
                       whiteSpace: "pre-line",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                      overflowWrap: "anywhere",
+                      wordBreak: "break-word",
                     }}
                   >
-                    {m.text}
+                    <TextWithLinks text={m.text} />
                   </div>
                 )}
               </div>
@@ -503,14 +566,38 @@ function VoiceScreen({ processing }: { processing: boolean }) {
 }
 
 export default function AiChat() {
+  const navigate = useNavigate();
   const [screen, setScreen] = useState<Screen>("welcome");
+
+  // Persistent messages from the backend
   const [messages, setMessages] = useState<Message[]>([]);
+
   const [showTyping, setShowTyping] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [voiceFlow, setVoiceFlow] = useState<VoiceFlow>("none");
   const [recordingTick, setRecordingTick] = useState(0);
   const [voicePreviewBars, setVoicePreviewBars] = useState(8);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Fetch history on mount
+  useEffect(() => {
+    const fetchHistory = async () => {
+      const res = await getAiHistory();
+      if (res.data?.messages) {
+        setMessages(res.data.messages);
+        // Automatically enter conversation if history exists
+        if (res.data.messages.length > 0) {
+          setScreen("chat-empty");
+        }
+      }
+    };
+    fetchHistory();
+  }, []);
+
+  // Transaction State
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmProcessing, setConfirmProcessing] = useState(false);
+  const [pendingTransaction, setPendingTransaction] = useState<TransactionDetails | null>(null);
 
   const showWelcomeOverlay = screen === "welcome";
 
@@ -534,49 +621,90 @@ export default function AiChat() {
     if (screen === "home") setScreen("chat-empty");
   }, [screen]);
 
-  const handleSendText = useCallback(() => {
+  const handleSendText = useCallback(async () => {
     const t = inputValue.trim();
     if (!t) return;
+
     enterThreadIfNeeded();
     const userMsg: Message = {
       id: `u-${Date.now()}`,
       role: "user",
       text: t,
-      time: "2m ago",
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
     };
+
     setMessages((prev) => [...prev, userMsg]);
     setInputValue("");
     resetVoice();
     setScreen("chat-responding");
     setShowTyping(true);
-    window.setTimeout(() => {
+
+    try {
+      const res = await postAiIntent(t);
+      setShowTyping(false);
+
+      if (res.data) {
+        const aiMsg: Message = {
+          id: `a-${Date.now()}`,
+          role: "ai",
+          text: res.data.message,
+        };
+
+        // If intent is a transaction, we can show a special state or navigate
+        if (res.data.intent === "SEND_FUNDS") {
+          aiMsg.isTransaction = true;
+          aiMsg.transactionParams = {
+            type: 'transfer',
+            amount: String(res.data.params.amount || "0"),
+            token: String(res.data.params.token || "FLOW"),
+            recipient: String(res.data.params.recipient || res.data.params.toAddress || "Unknown"),
+          };
+          aiMsg.transactionDetails = {
+            label: "Transfer Intent",
+            sent: `Amount: ${res.data.params.amount} ${res.data.params.token}`,
+            to: `Recipient: ${res.data.params.recipient}`,
+            result: "Tap to confirm and send",
+          };
+          setPendingTransaction(aiMsg.transactionParams);
+        } else if (res.data.intent === "SWAP_TOKEN") {
+          aiMsg.isTransaction = true;
+          aiMsg.transactionParams = {
+            type: 'swap',
+            fromToken: String(res.data.params.fromToken || "FLOW"),
+            toToken: String(res.data.params.toToken || "USDC"),
+            fromAmount: String(res.data.params.fromAmount || "0"),
+          };
+          aiMsg.transactionDetails = {
+            label: "Swap Intent",
+            sent: `From: ${res.data.params.fromAmount} ${res.data.params.fromToken}`,
+            to: `To: ${res.data.params.toToken}`,
+            result: "Tap to confirm swap",
+          };
+          setPendingTransaction(aiMsg.transactionParams);
+        }
+
+        setMessages((prev) => [...prev, aiMsg]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `err-${Date.now()}`,
+            role: "ai",
+            text: res.error || "Sorry, I encountered an error. Please try again.",
+          },
+        ]);
+      }
+    } catch (err) {
       setShowTyping(false);
       setMessages((prev) => [
         ...prev,
         {
-          id: `a-${Date.now()}`,
+          id: `err-${Date.now()}`,
           role: "ai",
-          text: "Processing... sending $50 to mum confirm this order enter your withdrawal pin.",
+          text: "Network error. Please check your connection.",
         },
       ]);
-    }, 1400);
-    window.setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `a2-${Date.now()}`,
-          role: "ai",
-          text: "",
-          isTransaction: true,
-          transactionDetails: {
-            label: "Withdrawal",
-            sent: "Sent: 20$",
-            to: "To: Ndukwe Anita",
-            result: "Account credited successfully",
-          },
-        },
-      ]);
-    }, 2800);
+    }
   }, [inputValue, enterThreadIfNeeded, resetVoice]);
 
   const handleVoiceSendFinal = useCallback(() => {
@@ -610,6 +738,85 @@ export default function AiChat() {
     }, 1600);
   }, [enterThreadIfNeeded, resetVoice]);
 
+  const handleConfirmTransaction = async (pin: string) => {
+    if (!pendingTransaction) return;
+    setConfirmProcessing(true);
+    try {
+      if (pendingTransaction.type === 'swap') {
+        const res = await postSwap({
+          fromToken: pendingTransaction.fromToken,
+          toToken: pendingTransaction.toToken,
+          fromAmount: pendingTransaction.fromAmount,
+          pin,
+        });
+        setConfirmProcessing(false);
+        setConfirmOpen(false);
+
+        if (res.data?.success) {
+          // Success swap logic
+          setMessages(prev => prev.map(msg => {
+            if (msg.role === 'ai' && msg.isTransaction && msg.transactionDetails?.label === "Swap Intent") {
+              return {
+                ...msg,
+                transactionDetails: {
+                  ...msg.transactionDetails,
+                  result: "Swap Complete! 🔄",
+                }
+              };
+            }
+            return msg;
+          }));
+
+          const explorerUrl = `https://evm-testnet.flowscan.io/tx/${res.data.hash}`;
+          setMessages(prev => [...prev, {
+            id: `sw-suc-${Date.now()}`,
+            role: "ai",
+            text: `Swap complete! Your assets have been exchanged on PunchSwap. [View on Flowscan](${explorerUrl})`,
+          }]);
+        } else {
+          alert(res.error || "Swap failed");
+        }
+      } else if (pendingTransaction.type === 'transfer') {
+        const res = await postTransfer({
+          to: pendingTransaction.recipient,
+          amount: pendingTransaction.amount,
+          token: pendingTransaction.token,
+          pin,
+        });
+        setConfirmProcessing(false);
+        setConfirmOpen(false);
+
+        if (res.data?.success) {
+          // Mark as sent
+          setMessages(prev => prev.map(msg => {
+            if (msg.role === 'ai' && msg.isTransaction && (msg.transactionDetails?.label === "Transfer Intent" || msg.transactionDetails?.label === "Schedule Intent")) {
+              return {
+                ...msg,
+                transactionDetails: {
+                  ...msg.transactionDetails,
+                  result: "Transaction Sent! ✅",
+                }
+              };
+            }
+            return msg;
+          }));
+
+          const explorerUrl = `https://evm-testnet.flowscan.io/tx/${res.data.hash}`;
+          setMessages(prev => [...prev, {
+            id: `tx-suc-${Date.now()}`,
+            role: "ai",
+            text: `Payment sent! Your transaction has been recorded on the blockchain. [View on Flowscan](${explorerUrl})`,
+          }]);
+        } else {
+          alert(res.error || "Transfer failed");
+        }
+      }
+    } catch (err: any) {
+      setConfirmProcessing(false);
+      alert("Network error while processing transaction");
+    }
+  };
+
   const composerEl = (
     <ChatComposer
       value={inputValue}
@@ -618,7 +825,7 @@ export default function AiChat() {
       recordingTick={recordingTick}
       voicePreviewBars={voicePreviewBars}
       textAreaRef={textAreaRef}
-      onDoc={() => {}}
+      onDoc={() => { }}
       onMic={() => {
         if (inputValue.trim()) return;
         enterThreadIfNeeded();
@@ -647,7 +854,7 @@ export default function AiChat() {
       return (
         <>
           <div className="chat-main-panel">
-            {!hideHomeDiscover ? <ChatHomePanel onPromptClick={(p) => {
+            {!hideHomeDiscover ? <ChatHomePanel onBack={() => navigate("/home")} onPromptClick={(p) => {
               setInputValue(p);
               setMessages([]);
               setShowTyping(false);
@@ -665,6 +872,13 @@ export default function AiChat() {
           messages={messages}
           showTyping={showTyping}
           composer={composerEl}
+          onBack={() => navigate("/home")}
+          onTransactionClick={(msg) => {
+            if (msg.transactionParams) {
+              setPendingTransaction(msg.transactionParams);
+              setConfirmOpen(true);
+            }
+          }}
         />
       );
     }
@@ -698,6 +912,13 @@ export default function AiChat() {
             <div className="ai-chat-root">
               {renderMain()}
               {showWelcomeOverlay && <WelcomeOverlay onClose={() => setScreen("home")} />}
+              <TransactionConfirmDrawer
+                open={confirmOpen}
+                onOpenChange={setConfirmOpen}
+                details={pendingTransaction}
+                onConfirm={handleConfirmTransaction}
+                processing={confirmProcessing}
+              />
             </div>
           </div>
         </div>

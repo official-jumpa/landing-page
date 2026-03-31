@@ -37,6 +37,7 @@ export default function JumpaDashboard() {
         onWithdraw={onWithdrawal}
         onDApp={onDApp}
       />
+      
       <QuickTransferList />
       <PromoBannerCard />
       <VirtualAccountBanner onClick={onVirtualAccount} />

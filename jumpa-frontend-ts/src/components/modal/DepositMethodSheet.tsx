@@ -10,6 +10,8 @@ export interface DepositMethodSheetProps {
   onClose: () => void;
   onSelectBank?: () => void;
   onSelectCrypto?: () => void;
+  address?: string;
+  selectedSymbol?: string;
 }
 
 const BANK_ACCOUNT_DISPLAY = "1235 3458 98";
@@ -19,8 +21,10 @@ const DepositMethodSheet: React.FC<DepositMethodSheetProps> = ({
   onClose,
   onSelectBank,
   onSelectCrypto,
+  address,
+  selectedSymbol,
 }) => {
-  const [step, setStep] = useState<"methods" | "bank">("methods");
+  const [step, setStep] = useState<"methods" | "bank" | "crypto">("methods");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -60,6 +64,16 @@ const DepositMethodSheet: React.FC<DepositMethodSheetProps> = ({
       }
     }
   }, []);
+
+  const handleCopyCrypto = useCallback(async () => {
+    if (!address) return;
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+    } catch {
+      /* ignore */
+    }
+  }, [address]);
 
   if (step === "bank") {
     return (
@@ -130,6 +144,60 @@ const DepositMethodSheet: React.FC<DepositMethodSheetProps> = ({
     );
   }
 
+  if (step === "crypto") {
+    return (
+      <div
+        className="deposit-method-sheet deposit-method-sheet--bank"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+      >
+        <div className="deposit-bank-topbar">
+          <button type="button" className="deposit-sheet-icon-btn" onClick={goBackToMethods}>
+            <img src={backIcon} alt="" className="deposit-sheet-back-icon" />
+          </button>
+          <button type="button" className="deposit-sheet-icon-btn" onClick={onClose}>
+            <img src={closeIcon} alt="" className="deposit-method-sheet-close-icon" />
+          </button>
+        </div>
+
+        <div className="deposit-bank-main">
+          <div className="deposit-bank-headings">
+            <h2 className="deposit-bank-title">Receive {selectedSymbol || "Crypto"}</h2>
+            <p className="deposit-bank-subtitle text-center">
+              {/* Scan the QR code or  */}
+              Copy the address below
+            </p>
+          </div>
+
+          <div className="mx-auto my-6 flex flex-col items-center justify-center rounded-2xl bg-white/5 p-8 border border-white/10">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 font-semibold">Your Wallet Address</span>
+            <span className="text-sm font-mono text-white text-center break-all leading-relaxed max-w-[200px]">
+              {address}
+            </span>
+          </div>
+
+          <div className="deposit-bank-account-card">
+            <div className="deposit-bank-account-row">
+              <div className="deposit-bank-account-texts">
+                <span className="deposit-bank-account-number text-sm break-all">{address}</span>
+                <span className="deposit-bank-account-meta">
+                  Your {selectedSymbol || "EVM"} Address
+                </span>
+              </div>
+              <button
+                type="button"
+                className={`deposit-bank-copy-btn${copied ? " is-copied" : ""}`}
+                onClick={handleCopyCrypto}
+              >
+                {copied ? "Copied" : "Copy"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="deposit-method-sheet"
@@ -183,7 +251,10 @@ const DepositMethodSheet: React.FC<DepositMethodSheetProps> = ({
           <button
             type="button"
             className="deposit-method-card"
-            onClick={() => onSelectCrypto?.()}
+            onClick={() => {
+                onSelectCrypto?.();
+                setStep("crypto");
+            }}
           >
             <div className="deposit-method-card-row">
               <div className="deposit-method-card-texts">

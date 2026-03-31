@@ -11,7 +11,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from "@/components/ui/input";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
+import { postAiIntent } from "@/lib/api";
+import { useState } from "react";
 
 const formSchema = z.object({
     prompt: z.string().min(1, { message: "A prompt is required" }),
@@ -32,15 +34,39 @@ export default function AiDashboard() {
     const promptValue = form.watch("prompt");
     const hasText = promptValue && promptValue.length > 0;
 
+    const [loading, setLoading] = useState(false);
+
     async function onSubmit(data: z.infer<typeof formSchema>) {
-        console.log("Submitted Data:", data);
+        if (loading) return;
+        setLoading(true);
+
+        try {
+            const res = await postAiIntent(data.prompt);
+            if (res.data) {
+                const { intent, params, message } = res.data;
+
+                if (intent === "SEND_FUNDS") {
+                    navigate("/send", { state: { intent, params } });
+                } else if (intent === "CHECK_BALANCE") {
+                    navigate("/home");
+                } else {
+                    alert(message);
+                }
+            } else {
+                alert(res.error || "AI failed to process request");
+            }
+        } catch (err) {
+            console.error("[AI] Error:", err);
+        } finally {
+            setLoading(false);
+        }
     }
 
     // Helper function to set the text when a card is clicked
     const handleCardClick = (text: string) => {
-        form.setValue("prompt", text, { 
+        form.setValue("prompt", text, {
             shouldValidate: true, // Trigger validation so the button state updates immediately
-            shouldDirty: true 
+            shouldDirty: true
         });
     };
 
@@ -65,9 +91,9 @@ export default function AiDashboard() {
 
                     {/* BOTTOM GRID MENU */}
                     <div className="grid grid-cols-2 gap-4 pt-8">
-                        
+
                         {/* 1. Payment Card */}
-                        <div 
+                        <div
                             onClick={() => handleCardClick("Send and recieve money")}
                             className="bg-white border-3 border-dashed border-gray-100 rounded-2xl p-4 flex flex-col gap-2 cursor-pointer hover:bg-gray-50 transition-colors active:scale-95 duration-200"
                         >
@@ -79,7 +105,7 @@ export default function AiDashboard() {
                         </div>
 
                         {/* 2. Investment/Saving Card */}
-                        <div 
+                        <div
                             onClick={() => handleCardClick("Split 10% Ama funds to saving")}
                             className="bg-white border-3 border-dashed border-gray-100 rounded-2xl p-4 flex flex-col gap-2 cursor-pointer hover:bg-gray-50 transition-colors active:scale-95 duration-200"
                         >
@@ -91,7 +117,7 @@ export default function AiDashboard() {
                         </div>
 
                         {/* 3. Earn/Balance Card */}
-                        <div 
+                        <div
                             onClick={() => handleCardClick("Give me run down of my balance")}
                             className="bg-white border-3 border-dashed border-gray-100 rounded-2xl p-4 flex flex-col gap-2 cursor-pointer hover:bg-gray-50 transition-colors active:scale-95 duration-200"
                         >
@@ -103,7 +129,7 @@ export default function AiDashboard() {
                         </div>
 
                         {/* 4. Loan/Updates Card */}
-                        <div 
+                        <div
                             onClick={() => handleCardClick("3rike riders update")}
                             className="bg-white border-3 border-dashed border-gray-100 rounded-2xl p-4 flex flex-col gap-2 cursor-pointer hover:bg-gray-50 transition-colors active:scale-95 duration-200"
                         >
@@ -134,9 +160,12 @@ export default function AiDashboard() {
                                                     <Button
                                                         type="submit"
                                                         size="icon"
-                                                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#00C259] hover:bg-[#00a049] transition-all duration-200"
+                                                        disabled={loading}
+                                                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#00C259] hover:bg-[#00a049] transition-all duration-200 disabled:opacity-50"
                                                     >
-                                                        {hasText ? (
+                                                        {loading ? (
+                                                            <Loader2 className="w-5 h-5 animate-spin text-white" />
+                                                        ) : hasText ? (
                                                             <div className="w-4 h-4 bg-white rounded-[2px]" />
                                                         ) : (
                                                             <ArrowUpRight className="w-6 h-6 text-white" strokeWidth={2.5} />
